@@ -1,0 +1,84 @@
+<h2>Bulk Material Allocation</h2>
+
+<div class="card">
+
+  <div>
+    <strong>Locator:</strong>
+    {{ locator?.locator_name }} ({{ locator?.locator_id }})
+  </div>
+
+  <!-- Team -->
+  <div class="form-group">
+    <label>Select Team</label>
+    <select [(ngModel)]="selectedTeamId">
+      <option [ngValue]="null">Select team</option>
+      <option *ngFor="let t of teams" [value]="t.team_id">
+        {{ t.team_name }}
+      </option>
+    </select>
+  </div>
+
+  <hr />
+
+  <!-- Rows -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Available</th>
+        <th>Quantity</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let row of rows; let i = index">
+        <td>
+          <select [(ngModel)]="row.material_code">
+            <option value="">Select material</option>
+
+            <option
+              *ngFor="let m of materials"
+              [value]="m.material_code"
+              [disabled]="isMaterialDisabled(m.material_code, i) || m.remaining_quantity === 0"
+            >
+              {{ m.material_name }}
+              ({{ remainingForRow(m.material_code, i) }} {{ m.uom }})
+            </option>
+          </select>
+        </td>
+
+        <td>
+          {{ remainingForRow(row.material_code, i) }}
+        </td>
+
+        <td>
+          <input
+            type="number"
+            min="1"
+            [max]="remainingForRow(row.material_code, i)"
+            [(ngModel)]="row.quantity"
+          />
+        </td>
+
+        <td>
+          <button (click)="removeRow(i)" *ngIf="rows.length > 1">
+            ✕
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button (click)="addRow()">+ Add Row</button>
+
+  <br /><br />
+
+  <button (click)="submit()" [disabled]="loading">
+    {{ loading ? 'Allocating...' : 'Allocate Materials' }}
+  </button>
+
+  <p class="success" *ngIf="success">{{ success }}</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+</div>

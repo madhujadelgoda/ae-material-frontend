@@ -1,0 +1,87 @@
+<h2>Return Materials to Locator</h2>
+
+<!-- FILTER BAR -->
+<div class="filters">
+
+  <label>
+    View:
+    <select [(ngModel)]="filterScope" (change)="loadAssignments()">
+      <option value="today">Today</option>
+      <option value="all">All</option>
+    </select>
+  </label>
+
+  <label>
+    From:
+    <input type="date" [(ngModel)]="fromDate" (change)="loadAssignments()" />
+  </label>
+
+  <label>
+    To:
+    <input type="date" [(ngModel)]="toDate" (change)="loadAssignments()" />
+  </label>
+
+  <label>
+    Team:
+    <select [(ngModel)]="selectedTeamFilter" (change)="loadAssignments()">
+      <option [ngValue]="null">All Teams</option>
+      <option *ngFor="let t of teams" [value]="t.team_id">
+        {{ t.team_name }}
+      </option>
+    </select>
+  </label>
+
+</div>
+
+<hr />
+
+<!-- TABLE -->
+<table class="table table--compact">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Material</th>
+      <th>Allocated</th>
+      <th>Returned</th>
+      <th>Remaining</th>
+      <th>Return Qty</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let a of assignments">
+      <td>{{ a.team_name }}</td>
+      <td>{{ a.material_name }}</td>
+      <td>{{ a.quantity }}</td>
+      <td>{{ a.returned_quantity || 0 }}</td>
+
+      <td>
+        <strong>{{ remaining(a) }}</strong>
+      </td>
+
+      <td>
+        <input
+          type="number"
+          min="1"
+          [max]="remaining(a)"
+          [(ngModel)]="returnMap[a.allocation_id]"
+          [disabled]="remaining(a) === 0"
+        />
+      </td>
+
+      <td>
+        <button
+          (click)="submitReturn(a)"
+          [disabled]="remaining(a) === 0 || loading"
+        >
+          Return
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Messages -->
+<p class="success" *ngIf="success">{{ success }}</p>
+<p class="error" *ngIf="error">{{ error }}</p>

@@ -1,0 +1,17 @@
+<h2>Dashboard</h2>
+
+<table>
+  <tr>
+    <th>Team</th>
+    <th>Material</th>
+    <th>Allocated</th>
+    <th>Remaining</th>
+  </tr>
+
+  <tr *ngFor="let a of assignments">
+    <td>{{ a.team_name }}</td>
+    <td>{{ a.material_code }}</td>
+    <td>{{ a.allocated_quantity }}</td>
+    <td>{{ a.remaining_quantity }}</td>
+  </tr>
+</table>

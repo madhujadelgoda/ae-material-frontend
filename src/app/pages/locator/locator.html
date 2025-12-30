@@ -1,0 +1,46 @@
+<div class="card">
+
+  <div class="card-header">
+    Assigned Locator
+  </div>
+
+  <div *ngIf="locator" class="mb-3">
+    <p><strong>ID:</strong> {{ locator.locator_id }}</p>
+    <p><strong>Name:</strong> {{ locator.locator_name }}</p>
+  </div>
+
+</div>
+
+<div class="card mt-md">
+
+  <div class="card-header">
+    Materials Available in Locator
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>UOM</th>
+        <th>Total</th>
+        <th>Allocated</th>
+        <th>Available</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let m of materials">
+        <td>{{ m.material_code }}</td>
+        <td>{{ m.material_name }}</td>
+        <td>{{ m.uom }}</td>
+        <td>{{ m.total_quantity }}</td>
+        <td>{{ m.allocated_quantity }}</td>
+        <td>
+          <strong>{{ m.remaining_quantity }}</strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

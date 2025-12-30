@@ -1,0 +1,53 @@
+<nav class="sidebar">
+
+  <!-- Brand -->
+  <div class="sidebar-header">
+    <span class="brand-dot"></span>
+    <span class="brand-title">AE Material</span>
+  </div>
+
+  <!-- Navigation -->
+  <div class="sidebar-section">
+    <p class="sidebar-section-title">MAIN NAVIGATION</p>
+
+    <a routerLink="/dashboard" routerLinkActive="active" class="sidebar-link">
+      Dashboard
+    </a>
+
+    <a routerLink="/locator" routerLinkActive="active" class="sidebar-link">
+      My Locator
+    </a>
+
+    <a routerLink="/materials" routerLinkActive="active" class="sidebar-link">
+      Materials
+    </a>
+
+    <a routerLink="/teams" routerLinkActive="active" class="sidebar-link">
+      Teams
+    </a>
+
+    <a routerLink="/assign" routerLinkActive="active" class="sidebar-link">
+      Assign Materials
+    </a>
+
+    <a routerLink="/return" routerLinkActive="active" class="sidebar-link">
+      Return Materials
+    </a>
+
+    <a routerLink="/bulk-allocate" routerLinkActive="active" class="sidebar-link">
+      Bulk Allocation
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">AE</div>
+      <div>
+        <div class="user-name">Assistant Engineer</div>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+</nav>

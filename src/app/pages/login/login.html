@@ -1,0 +1,10 @@
+<div class="login-box">
+  <h2>Assistant Engineer Login</h2>
+
+  <input [(ngModel)]="userId" placeholder="AE ID" />
+  <input [(ngModel)]="password" type="password" placeholder="Password" />
+
+  <button (click)="login()">Login</button>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+</div>

@@ -1,0 +1,55 @@
+.card {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--border-light);
+}
+
+.card-header {
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Header */
+.table th {
+  text-align: left;
+  padding: 8px 10px;          /* ↓ reduced */
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
+  line-height: 1.2;
+}
+
+/* Body cells */
+.table td {
+  padding: 10px 12px;          /* ↓ reduced */
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-light);
+  line-height: 1.25;
+  vertical-align: middle;
+}
+
+/* Optional: hover highlight */
+.table tbody tr:hover {
+  background: var(--bg-soft);
+}
+
+/* Optional: tighter variant (use class="table table--compact") */
+.table--compact th {
+  padding: 6px 8px;
+  font-size: 0.78rem;
+}
+
+.table--compact td {
+  padding: 5px 8px;
+  font-size: 0.82rem;
+}
+
