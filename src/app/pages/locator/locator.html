@@ -1,23 +1,34 @@
 <div class="card">
 
-  <div class="card-header">
-    Assigned Locator
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Assigned Locator</h3>
   </div>
 
-  <div *ngIf="locator" class="mb-3">
-    <p><strong>ID:</strong> {{ locator.locator_id }}</p>
-    <p><strong>Name:</strong> {{ locator.locator_name }}</p>
+  <!-- Locator Info -->
+  <div *ngIf="locator" class="filters-row">
+    <div class="form-group inline">
+      <label>ID</label>
+      <div>{{ locator.locator_id }}</div>
+    </div>
+
+    <div class="form-group inline">
+      <label>Name</label>
+      <div>{{ locator.locator_name }}</div>
+    </div>
   </div>
 
 </div>
 
-<div class="card mt-md">
+<div class="card" style="margin-top: 16px;">
 
-  <div class="card-header">
-    Materials Available in Locator
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Materials Available in Locator</h3>
   </div>
 
-  <table class="table">
+  <!-- Table -->
+  <table class="table table--compact">
     <thead>
       <tr>
         <th>Code</th>
@@ -37,7 +48,9 @@
         <td>{{ m.total_quantity }}</td>
         <td>{{ m.allocated_quantity }}</td>
         <td>
-          <strong>{{ m.remaining_quantity }}</strong>
+          <span class="badge green">
+            {{ m.remaining_quantity }}
+          </span>
         </td>
       </tr>
     </tbody>

@@ -1,0 +1,38 @@
+<div class="card">
+
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Permissions</h3>
+
+    <span class="badge green">
+      {{ permissions.length }} Total
+    </span>
+  </div>
+
+  <!-- Table -->
+  <table class="table table--compact">
+    <thead>
+      <tr>
+        <th style="width: 35%">Permission Key</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let p of permissions">
+        <td>
+          <code>{{ p.permission_key }}</code>
+        </td>
+        <td>{{ p.description }}</td>
+      </tr>
+
+      <!-- Empty state -->
+      <tr *ngIf="permissions.length === 0">
+        <td colspan="2" style="text-align: center; color: var(--text-secondary)">
+          No permissions found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

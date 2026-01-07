@@ -1,17 +1,33 @@
-<h2>Dashboard</h2>
+<div class="dashboard-grid">
 
-<table>
-  <tr>
-    <th>Team</th>
-    <th>Material</th>
-    <th>Allocated</th>
-    <th>Remaining</th>
-  </tr>
+  <div class="card">
+    <h4>Total Materials</h4>
+    <p>{{ summary.totalMaterials }}</p>
+  </div>
 
-  <tr *ngFor="let a of assignments">
-    <td>{{ a.team_name }}</td>
-    <td>{{ a.material_code }}</td>
-    <td>{{ a.allocated_quantity }}</td>
-    <td>{{ a.remaining_quantity }}</td>
-  </tr>
-</table>
+  <div class="card">
+    <h4>Total Teams</h4>
+    <p>{{ summary.totalTeams }}</p>
+  </div>
+
+  <div class="card">
+    <h4>Total Allocations</h4>
+    <p>{{ summary.totalAllocations }}</p>
+  </div>
+
+  <div class="card">
+    <h4>Active Allocations</h4>
+    <p>{{ summary.activeAllocations }}</p>
+  </div>
+
+  <div class="card">
+    <h4>Returned Today</h4>
+    <p>{{ summary.returnedToday }}</p>
+  </div>
+
+  <div class="card">
+    <h4>Allocated Today</h4>
+    <p>{{ summary.todayAllocations }}</p>
+  </div>
+
+</div>

@@ -6,9 +6,9 @@
     <span class="brand-title">AE Material</span>
   </div>
 
-  <!-- Navigation -->
+  <!-- MAIN -->
   <div class="sidebar-section">
-    <p class="sidebar-section-title">MAIN NAVIGATION</p>
+    <p class="sidebar-section-title">MAIN</p>
 
     <a routerLink="/dashboard" routerLinkActive="active" class="sidebar-link">
       Dashboard
@@ -18,13 +18,13 @@
       My Locator
     </a>
 
-    <a routerLink="/materials" routerLinkActive="active" class="sidebar-link">
+    <!-- <a routerLink="/materials" routerLinkActive="active" class="sidebar-link">
       Materials
     </a>
 
     <a routerLink="/teams" routerLinkActive="active" class="sidebar-link">
       Teams
-    </a>
+    </a> -->
 
     <a routerLink="/assign" routerLinkActive="active" class="sidebar-link">
       Assign Materials
@@ -39,12 +39,32 @@
     </a>
   </div>
 
-  <!-- Footer -->
+  <!-- ADMIN SECTION -->
+  <div class="sidebar-section" *ngIf="isAdmin">
+    <p class="sidebar-section-title">ADMIN</p>
+
+    <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">
+      Users
+    </a>
+
+    <a routerLink="/admin/roles" routerLinkActive="active" class="sidebar-link">
+      Roles
+    </a>
+
+    <a routerLink="/admin/permissions" routerLinkActive="active" class="sidebar-link">
+      Permissions
+    </a>
+  </div>
+
+  <!-- FOOTER -->
   <div class="sidebar-footer">
     <div class="user-info">
-      <div class="avatar">AE</div>
+      <div class="avatar">
+        {{ username.charAt(0) | uppercase }}
+      </div>
+
       <div>
-        <div class="user-name">Assistant Engineer</div>
+        <div class="user-name">{{ username }}</div>
         <button class="logout-btn" (click)="logout()">Logout</button>
       </div>
     </div>

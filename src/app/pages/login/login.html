@@ -1,10 +1,32 @@
-<div class="login-box">
-  <h2>Assistant Engineer Login</h2>
+<div class="login-wrapper">
+  <div class="login-card">
 
-  <input [(ngModel)]="userId" placeholder="AE ID" />
-  <input [(ngModel)]="password" type="password" placeholder="Password" />
+    <h2>Login</h2>
+    <p class="subtitle">Sign in to access the system</p>
 
-  <button (click)="login()">Login</button>
+    <div class="form-group">
+      <label>AE ID</label>
+      <input
+        type="text"
+        [(ngModel)]="userId"
+        placeholder="Enter your ID"
+      />
+    </div>
 
-  <p class="error" *ngIf="error">{{ error }}</p>
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Enter your password"
+      />
+    </div>
+
+    <button class="btn-primary" (click)="login()">
+      Login
+    </button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+  </div>
 </div>

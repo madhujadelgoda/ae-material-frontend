@@ -1,13 +1,15 @@
-<h2>Bulk Material Allocation</h2>
-
 <div class="card">
 
-  <div>
-    <strong>Locator:</strong>
-    {{ locator?.locator_name }} ({{ locator?.locator_id }})
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Bulk Material Allocation</h3>
+
+    <span class="badge green" *ngIf="locator">
+      {{ locator.locator_name }} ({{ locator.locator_id }})
+    </span>
   </div>
 
-  <!-- Team -->
+  <!-- Team selection -->
   <div class="form-group">
     <label>Select Team</label>
     <select [(ngModel)]="selectedTeamId">
@@ -18,16 +20,14 @@
     </select>
   </div>
 
-  <hr />
-
-  <!-- Rows -->
-  <table class="table">
+  <!-- Materials table -->
+  <table class="table table--compact">
     <thead>
       <tr>
-        <th>Material</th>
-        <th>Available</th>
-        <th>Quantity</th>
-        <th></th>
+        <th style="width: 45%">Material</th>
+        <th style="width: 20%">Available</th>
+        <th style="width: 20%">Quantity</th>
+        <th style="width: 15%"></th>
       </tr>
     </thead>
 
@@ -49,11 +49,14 @@
         </td>
 
         <td>
-          {{ remainingForRow(row.material_code, i) }}
+          <span class="badge green">
+            {{ remainingForRow(row.material_code, i) }}
+          </span>
         </td>
 
         <td>
           <input
+            class="qty-input"
             type="number"
             min="1"
             [max]="remainingForRow(row.material_code, i)"
@@ -62,22 +65,34 @@
         </td>
 
         <td>
-          <button (click)="removeRow(i)" *ngIf="rows.length > 1">
-            ✕
+          <button
+            class="btn small warn"
+            *ngIf="rows.length > 1"
+            (click)="removeRow(i)"
+          >
+            Remove
           </button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <button (click)="addRow()">+ Add Row</button>
+  <!-- Actions -->
+  <div class="flex-between" style="margin-top: 16px">
+    <button class="btn ghost small" (click)="addRow()">
+      + Add Row
+    </button>
 
-  <br /><br />
+    <button
+      class="btn primary"
+      (click)="submit()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Allocating…' : 'Allocate Materials' }}
+    </button>
+  </div>
 
-  <button (click)="submit()" [disabled]="loading">
-    {{ loading ? 'Allocating...' : 'Allocate Materials' }}
-  </button>
-
+  <!-- Feedback -->
   <p class="success" *ngIf="success">{{ success }}</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 

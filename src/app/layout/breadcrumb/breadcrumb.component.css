@@ -1,0 +1,21 @@
+.breadcrumb {
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.crumb {
+  cursor: default;
+}
+
+.crumb.active {
+  font-weight: 600;
+  color: #111827;
+}
+
+.sep {
+  color: #9ca3af;
+}

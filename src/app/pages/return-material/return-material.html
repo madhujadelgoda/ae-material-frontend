@@ -1,87 +1,89 @@
-<h2>Return Materials to Locator</h2>
+<div class="card">
 
-<!-- FILTER BAR -->
-<div class="filters">
+  <div class="card-header flex-between">
+    <h3>Return Materials</h3>
+  </div>
 
-  <label>
-    View:
-    <select [(ngModel)]="filterScope" (change)="loadAssignments()">
-      <option value="today">Today</option>
-      <option value="all">All</option>
-    </select>
-  </label>
+  <!-- Filters -->
+  <div class="filters-row">
+    <div class="form-group inline">
+      <label>View</label>
+      <select [(ngModel)]="filterScope" (change)="loadAssignments()">
+        <option value="today">Today</option>
+        <option value="all">All</option>
+      </select>
+    </div>
 
-  <label>
-    From:
-    <input type="date" [(ngModel)]="fromDate" (change)="loadAssignments()" />
-  </label>
+    <div class="form-group inline">
+      <label>From</label>
+      <input type="date" [(ngModel)]="fromDate" (change)="loadAssignments()" />
+    </div>
 
-  <label>
-    To:
-    <input type="date" [(ngModel)]="toDate" (change)="loadAssignments()" />
-  </label>
+    <div class="form-group inline">
+      <label>To</label>
+      <input type="date" [(ngModel)]="toDate" (change)="loadAssignments()" />
+    </div>
 
-  <label>
-    Team:
-    <select [(ngModel)]="selectedTeamFilter" (change)="loadAssignments()">
-      <option [ngValue]="null">All Teams</option>
-      <option *ngFor="let t of teams" [value]="t.team_id">
-        {{ t.team_name }}
-      </option>
-    </select>
-  </label>
+    <div class="form-group inline">
+      <label>Team</label>
+      <select [(ngModel)]="selectedTeamFilter" (change)="loadAssignments()">
+        <option [ngValue]="null">All Teams</option>
+        <option *ngFor="let t of teams" [value]="t.team_id">
+          {{ t.team_name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <table class="table table--compact">
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>Material</th>
+        <th>Allocated</th>
+        <th>Returned</th>
+        <th>Remaining</th>
+        <th>Return Qty</th>
+        <th width="120">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let a of assignments">
+        <td>{{ a.team_name }}</td>
+        <td>{{ a.material_name }}</td>
+        <td>{{ a.quantity }}</td>
+        <td>{{ a.returned_quantity || 0 }}</td>
+
+        <td>
+          <span class="badge green">
+            {{ remaining(a) }}
+          </span>
+        </td>
+
+        <td>
+          <input
+            class="qty-input"
+            type="number"
+            min="1"
+            [max]="remaining(a)"
+            [(ngModel)]="returnMap[a.allocation_id]"
+            [disabled]="remaining(a) === 0"
+          />
+        </td>
+
+        <td>
+          <button
+            class="btn primary small"
+            (click)="submitReturn(a)"
+            [disabled]="remaining(a) === 0 || loading"
+          >
+            Return
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
 </div>
-
-<hr />
-
-<!-- TABLE -->
-<table class="table table--compact">
-  <thead>
-    <tr>
-      <th>Team</th>
-      <th>Material</th>
-      <th>Allocated</th>
-      <th>Returned</th>
-      <th>Remaining</th>
-      <th>Return Qty</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr *ngFor="let a of assignments">
-      <td>{{ a.team_name }}</td>
-      <td>{{ a.material_name }}</td>
-      <td>{{ a.quantity }}</td>
-      <td>{{ a.returned_quantity || 0 }}</td>
-
-      <td>
-        <strong>{{ remaining(a) }}</strong>
-      </td>
-
-      <td>
-        <input
-          type="number"
-          min="1"
-          [max]="remaining(a)"
-          [(ngModel)]="returnMap[a.allocation_id]"
-          [disabled]="remaining(a) === 0"
-        />
-      </td>
-
-      <td>
-        <button
-          (click)="submitReturn(a)"
-          [disabled]="remaining(a) === 0 || loading"
-        >
-          Return
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- Messages -->
-<p class="success" *ngIf="success">{{ success }}</p>
-<p class="error" *ngIf="error">{{ error }}</p>

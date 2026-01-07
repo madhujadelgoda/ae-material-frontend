@@ -1,0 +1,79 @@
+<div class="card">
+  <div class="card-header flex-between">
+    <h3>Users</h3>
+    <button class="btn primary" (click)="openCreate()">+ New User</button>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Roles</th>
+        <th>Status</th>
+        <th width="260">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let u of users">
+        <td>{{ u.username }}</td>
+
+        <td>{{ u.full_name || '—' }}</td>
+
+        <td>
+          <span class="badge" *ngFor="let r of u.roles?.split(',')">
+            {{ r }}
+          </span>
+        </td>
+
+        <td>
+          <span
+            class="badge"
+            [class.green]="u.status === 'ACTIVE'"
+            [class.red]="u.status === 'INACTIVE'"
+          >
+            {{ u.status }}
+          </span>
+        </td>
+
+        <td>
+          <button class="btn small" (click)="openEdit(u)">Edit</button>
+
+          <button class="btn small" (click)="openReset(u)">
+            Reset
+          </button>
+
+          <button
+            class="btn warn small"
+            (click)="toggleStatus(u)"
+          >
+            {{ u.status === 'ACTIVE' ? 'Disable' : 'Enable' }}
+          </button>
+
+          <button
+            class="btn danger small"
+            (click)="deleteUser(u)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modals -->
+<app-user-form-modal
+  *ngIf="showForm"
+  [user]="selectedUser"
+  (close)="showForm = false"
+  (saved)="onSaved()"
+></app-user-form-modal>
+
+<app-reset-password-modal
+  *ngIf="showReset"
+  [user]="selectedUser"
+  (close)="showReset = false"
+  (done)="onResetDone()"
+></app-reset-password-modal>
