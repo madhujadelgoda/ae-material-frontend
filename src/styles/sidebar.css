@@ -7,7 +7,7 @@
   width: 260px;
   height: 100vh;
 
-  background: var(--bg-white);
+  background: linear-gradient(135deg,  #22c55e, #2563eb);
   border-right: 1px solid var(--border-light);
 
   display: flex;
@@ -37,6 +37,7 @@
 
 .brand-title {
   font-weight: 600;
+  color: #ffffff;
 }
 
 /* Section labels */
@@ -46,6 +47,7 @@
   margin-bottom: 8px;
   margin-top: 12px;
   letter-spacing: 0.04em;
+  color: #ffffff;
 }
 
 /* Links */
@@ -58,6 +60,7 @@
   font-size: 14px;
   margin-bottom: 4px;
   transition: 0.2s;
+  color: #ffffff;
 }
 
 .sidebar-link:hover {
@@ -99,6 +102,7 @@
 .user-name {
   font-size: 13px;
   font-weight: 500;
+  color: #ffffff;
 }
 
 .logout-btn {
@@ -106,6 +110,6 @@
   border: none;
   padding: 0;
   font-size: 12px;
-  color: #dc2626;
+  color: #050000;
   cursor: pointer;
 }

@@ -23,9 +23,10 @@
   padding: 8px 10px;          /* ↓ reduced */
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: #e6e6e6;
   border-bottom: 1px solid var(--border-light);
   line-height: 1.2;
+  background: #146e8a;
 }
 
 /* Body cells */
@@ -137,7 +138,7 @@
 }
 
 .btn.primary {
-  background: #2563eb;
+  background:  #2563eb;
   color: white;
 }
 
@@ -243,7 +244,7 @@
 
 /* Danger / reset */
 .btn.danger {
-  background: #dc2626;
+  background: #d61111;
   color: white;
   border: none;
 }
@@ -320,12 +321,12 @@
 }
 
 .btn.warn {
-  background: #f59e0b;
+  background: #515152;
   color: white;
 }
 
 .btn.warn:hover {
-  background: #d97706;
+  background: rgb(41, 40, 40);
 }
 
 /* Align action buttons nicely */
