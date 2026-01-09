@@ -10,11 +10,21 @@
   <div class="sidebar-section">
     <p class="sidebar-section-title">MAIN</p>
 
-    <a routerLink="/dashboard" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar-link"
+    >
       Dashboard
     </a>
 
-    <a routerLink="/locator" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/locator"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar-link"
+    >
       My Locator
     </a>
 
@@ -26,15 +36,30 @@
       Teams
     </a> -->
 
-    <a routerLink="/assign" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/assign"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar-link"
+    >
       Assign Materials
     </a>
 
-    <a routerLink="/return" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/return"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar-link"
+    >
       Return Materials
     </a>
 
-    <a routerLink="/bulk-allocate" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/bulk-allocate"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar-link"
+    >
       Bulk Allocation
     </a>
   </div>
@@ -43,15 +68,27 @@
   <div class="sidebar-section" *ngIf="isAdmin">
     <p class="sidebar-section-title">ADMIN</p>
 
-    <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/admin/users"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
       Users
     </a>
 
-    <a routerLink="/admin/roles" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/admin/roles"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
       Roles
     </a>
 
-    <a routerLink="/admin/permissions" routerLinkActive="active" class="sidebar-link">
+    <a
+      routerLink="/admin/permissions"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
       Permissions
     </a>
   </div>

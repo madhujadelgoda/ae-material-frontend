@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive
+} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StorageService } from '../../core/services/storage.service';
 
@@ -7,8 +11,9 @@ import { StorageService } from '../../core/services/storage.service';
   standalone: true,
   selector: 'app-sidebar',
   imports: [
-    CommonModule,   
-    RouterLink
+    CommonModule,
+    RouterLink,
+    RouterLinkActive 
   ],
   templateUrl: './sidebar.html'
 })

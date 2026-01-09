@@ -52,26 +52,27 @@
 
 /* Links */
 .sidebar-link {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 8px;
-  color: var(--text-secondary);
   font-size: 14px;
   margin-bottom: 4px;
-  transition: 0.2s;
-  color: #ffffff;
+
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .sidebar-link:hover {
-  background: var(--primary-soft);
-  color: var(--primary);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .sidebar-link.active {
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.22);
+  font-weight: 500;
 }
 
 /* Footer */
