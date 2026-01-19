@@ -17,16 +17,29 @@
 
     <tbody>
       <tr *ngFor="let u of users">
+        <!-- Username -->
         <td>{{ u.username }}</td>
 
+        <!-- Full Name -->
         <td>{{ u.full_name || '—' }}</td>
 
+        <!-- Roles -->
         <td>
-          <span class="badge" *ngFor="let r of u.roles?.split(',')">
-            {{ r }}
-          </span>
+          <ng-container *ngIf="u.roles?.length; else noRoles">
+            <span
+              class="badge"
+              *ngFor="let r of u.roles"
+            >
+              {{ r }}
+            </span>
+          </ng-container>
+
+          <ng-template #noRoles>
+            <span class="muted">—</span>
+          </ng-template>
         </td>
 
+        <!-- Status -->
         <td>
           <span
             class="badge"
@@ -37,10 +50,19 @@
           </span>
         </td>
 
+        <!-- Actions -->
         <td>
-          <button class="btn small" (click)="openEdit(u)">Edit</button>
+          <button
+            class="btn small"
+            (click)="openEdit(u)"
+          >
+            Edit
+          </button>
 
-          <button class="btn small" (click)="openReset(u)">
+          <button
+            class="btn small"
+            (click)="openReset(u)"
+          >
             Reset
           </button>
 
@@ -63,7 +85,7 @@
   </table>
 </div>
 
-<!-- Modals -->
+<!-- Create / Edit User Modal -->
 <app-user-form-modal
   *ngIf="showForm"
   [user]="selectedUser"
@@ -71,6 +93,7 @@
   (saved)="onSaved()"
 ></app-user-form-modal>
 
+<!-- Reset Password Modal -->
 <app-reset-password-modal
   *ngIf="showReset"
   [user]="selectedUser"

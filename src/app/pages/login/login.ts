@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './login.html'
 })
 export class LoginComponent {
-  userId = '';
+  username = '';
   password = '';
   error = '';
 
@@ -22,13 +22,18 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.auth.login(this.userId, this.password).subscribe({
+    this.error = '';
+
+    this.auth.login(this.username, this.password).subscribe({
       next: res => {
-        StorageService.setToken(res.token);
+        // Store ONLY the JWT
+        StorageService.setToken(res.access_token);
+
+        // Roles & permissions are read from JWT payload
         this.router.navigate(['/dashboard']);
       },
       error: err => {
-        this.error = err.error?.message || 'Login failed';
+        this.error = err.error?.detail || 'Invalid credentials';
       }
     });
   }

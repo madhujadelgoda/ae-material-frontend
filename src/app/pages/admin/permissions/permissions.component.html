@@ -1,38 +1,104 @@
-<div class="card">
+<!-- src/app/pages/admin/permissions/permissions.component.html -->
 
-  <!-- Header -->
+<!-- Create Permission -->
+<div class="card">
+  <div class="card-header">
+    <h3>Create Permission</h3>
+  </div>
+
+  <div class="form-group">
+    <label>Permission Key</label>
+    <input
+      type="text"
+      placeholder="e.g. MATERIAL_ALLOCATE"
+      [(ngModel)]="key"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Description</label>
+    <input
+      type="text"
+      placeholder="Short description"
+      [(ngModel)]="desc"
+    />
+  </div>
+
+  <button class="btn primary" (click)="create()">
+    Create Permission
+  </button>
+</div>
+
+<!-- Permissions Table -->
+<div class="card" style="margin-top: 20px">
+
   <div class="card-header flex-between">
     <h3>Permissions</h3>
 
-    <span class="badge green">
-      {{ permissions.length }} Total
-    </span>
+    <div class="actions">
+      <span class="badge green">
+        {{ permissions.length }} Total
+      </span>
+    </div>
   </div>
 
-  <!-- Table -->
   <table class="table table--compact">
     <thead>
       <tr>
-        <th style="width: 35%">Permission Key</th>
+        <th style="width: 30%">Permission Key</th>
         <th>Description</th>
+        <th style="width: 200px">Actions</th>
       </tr>
     </thead>
 
     <tbody>
       <tr *ngFor="let p of permissions">
+
         <td>
           <code>{{ p.permission_key }}</code>
         </td>
-        <td>{{ p.description }}</td>
+
+        <td>
+          <span *ngIf="editing?.permission_id !== p.permission_id">
+            {{ p.description || '—' }}
+          </span>
+
+          <input
+            *ngIf="editing?.permission_id === p.permission_id"
+            type="text"
+            [(ngModel)]="desc"
+          />
+        </td>
+
+        <td>
+          <ng-container *ngIf="editing?.permission_id !== p.permission_id">
+            <button class="btn small" (click)="startEdit(p)">
+              Edit
+            </button>
+
+            <button class="btn danger small" (click)="delete(p)">
+              Delete
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+            <button class="btn small primary" (click)="saveEdit()">
+              Save
+            </button>
+
+            <button class="btn small ghost" (click)="cancelEdit()">
+              Cancel
+            </button>
+          </ng-container>
+        </td>
+
       </tr>
 
-      <!-- Empty state -->
       <tr *ngIf="permissions.length === 0">
-        <td colspan="2" style="text-align: center; color: var(--text-secondary)">
+        <td colspan="3" style="text-align:center; color: var(--text-secondary)">
           No permissions found
         </td>
       </tr>
     </tbody>
   </table>
-
 </div>
