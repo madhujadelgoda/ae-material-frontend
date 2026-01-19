@@ -3,16 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 interface BulkItem {
-  material_code: string;
+  material_code: string | null;
   quantity: number | null;
 }
 
 @Component({
   standalone: true,
   selector: 'app-bulk-allocate',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgSelectModule],
   templateUrl: './bulk-allocate.html'
 })
 export class BulkAllocateComponent implements OnInit {
@@ -22,7 +23,6 @@ export class BulkAllocateComponent implements OnInit {
   locator: any;
 
   selectedTeamId: number | null = null;
-
   rows: BulkItem[] = [];
 
   loading = false;
@@ -61,7 +61,7 @@ export class BulkAllocateComponent implements OnInit {
   // -----------------------------
   addRow() {
     this.rows.push({
-      material_code: '',
+      material_code: null,
       quantity: null
     });
   }
@@ -70,19 +70,21 @@ export class BulkAllocateComponent implements OnInit {
     this.rows.splice(index, 1);
   }
 
-  getMaterial(code: string) {
-    return this.materials.find(m => m.material_code === code);
+  getMaterial(code: string | null) {
+    return this.materials.find(m => m.erp_code === code);
   }
 
-  /** how much already used in other rows */
-  usedQuantity(materialCode: string, currentIndex: number): number {
+  /** Quantity already allocated in other rows */
+  usedQuantity(materialCode: string | null, currentIndex: number): number {
+    if (!materialCode) return 0;
+
     return this.rows
       .filter((r, i) => i !== currentIndex && r.material_code === materialCode)
       .reduce((sum, r) => sum + (r.quantity || 0), 0);
   }
 
-  /** remaining quantity considering other rows */
-  remainingForRow(materialCode: string, rowIndex: number): number {
+  /** Remaining quantity for this row */
+  remainingForRow(materialCode: string | null, rowIndex: number): number {
     const mat = this.getMaterial(materialCode);
     if (!mat) return 0;
 
@@ -90,7 +92,7 @@ export class BulkAllocateComponent implements OnInit {
     return Math.max(mat.remaining_quantity - used, 0);
   }
 
-  /** disable already-selected materials */
+  /** Disable material already selected in another row */
   isMaterialDisabled(materialCode: string, rowIndex: number): boolean {
     return this.rows.some(
       (row, idx) =>
@@ -142,7 +144,6 @@ export class BulkAllocateComponent implements OnInit {
 
     this.http.post(`${environment.apiUrl}/materials/allocate-bulk`, {
       team_id: this.selectedTeamId,
-      locator_id: this.locator.locator_id,
       items
     }).subscribe({
       next: () => {
@@ -152,7 +153,7 @@ export class BulkAllocateComponent implements OnInit {
         this.loadMaterials();
       },
       error: err => {
-        this.error = err.error?.message || 'Bulk allocation failed';
+        this.error = err.error?.detail || 'Bulk allocation failed';
       },
       complete: () => {
         this.loading = false;

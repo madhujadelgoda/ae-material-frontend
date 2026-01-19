@@ -10,25 +10,45 @@ import { environment } from '../../../environments/environment';
 })
 export class LocatorComponent implements OnInit {
 
-  locator: any;
+  locator: any = null;
   materials: any[] = [];
+  loading = false;
+  error: string | null = null;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.loadLocator();
-    this.loadAvailableMaterials();
+    this.loadMaterials();
   }
 
   loadLocator() {
     this.http
       .get(`${environment.apiUrl}/erp/locator`)
-      .subscribe(data => (this.locator = data));
+      .subscribe({
+        next: data => {
+          this.locator = data;
+        },
+        error: () => {
+          this.error = 'Failed to load locator';
+        }
+      });
   }
 
-  loadAvailableMaterials() {
+  loadMaterials() {
+    this.loading = true;
+
     this.http
       .get<any[]>(`${environment.apiUrl}/materials/available`)
-      .subscribe(data => (this.materials = data));
+      .subscribe({
+        next: data => {
+          this.materials = data;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load materials';
+          this.loading = false;
+        }
+      });
   }
 }

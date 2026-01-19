@@ -8,24 +8,15 @@ import { environment } from '../../../environments/environment';
 @Component({
   standalone: true,
   selector: 'app-return-material',
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatSnackBarModule
-  ],
+  imports: [CommonModule, FormsModule, MatSnackBarModule],
   templateUrl: './return-material.html'
 })
 export class ReturnMaterialComponent implements OnInit {
 
-  assignments: any[] = [];
-  teams: any[] = [];
+  allocations: any[] = [];
 
-  returnMap: Record<number, number> = {};
-
-  filterScope: 'today' | 'all' = 'today';
-  fromDate = '';
-  toDate = '';
-  selectedTeamFilter: number | null = null;
+  usedQty: Record<number, number> = {};
+  damagedQty: Record<number, number> = {};
 
   loading = false;
 
@@ -35,16 +26,15 @@ export class ReturnMaterialComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadTeams();
-    this.loadAssignments();
+    this.loadAllocations();
   }
 
   // ----------------------------
-  // Snackbar helper
+  // Toast
   // ----------------------------
-  showSnack(message: string, type: 'success' | 'error' | 'info' = 'info') {
+  notify(message: string, type: 'success' | 'error' = 'success') {
     this.snackBar.open(message, 'Close', {
-      duration: 3000,
+      duration: 3500,
       horizontalPosition: 'right',
       verticalPosition: 'top',
       panelClass: [`snackbar-${type}`]
@@ -52,78 +42,117 @@ export class ReturnMaterialComponent implements OnInit {
   }
 
   // ----------------------------
-  // Load teams
+  // Load allocations
   // ----------------------------
-  loadTeams() {
-    this.http.get<any[]>(`${environment.apiUrl}/teams`)
+  loadAllocations() {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/materials/allocations`)
       .subscribe({
-        next: data => this.teams = data,
-        error: () => this.showSnack('Failed to load teams', 'error')
+        next: data => this.allocations = data,
+        error: () => this.notify('Failed to load allocations', 'error')
       });
   }
 
   // ----------------------------
-  // Load assignments
+  // Lock row once returned
   // ----------------------------
-  loadAssignments() {
-    const params: any = {
-      scope: this.filterScope
-    };
-
-    if (this.fromDate && this.toDate) {
-      params.from = this.fromDate;
-      params.to = this.toDate;
-    }
-
-    if (this.selectedTeamFilter) {
-      params.team_id = this.selectedTeamFilter;
-    }
-
-    this.http.get<any[]>(`${environment.apiUrl}/materials/assignments`, { params })
-      .subscribe({
-        next: data => this.assignments = data,
-        error: () => this.showSnack('Failed to load assignments', 'error')
-      });
+  isLocked(a: any): boolean {
+    return a.status === 'RETURNED';
   }
 
   // ----------------------------
-  // Remaining quantity
+  // Returned quantity logic
   // ----------------------------
-  remaining(a: any): number {
-    return a.quantity - (a.returned_quantity ?? 0);
+  /**
+   * BEFORE return  -> preview = allocated - used
+   * AFTER return   -> show backend returned_quantity
+   */
+  returnedQty(a: any): number | null {
+
+    // After return → trust backend
+    if (this.isLocked(a)) {
+      return a.returned_quantity;
+    }
+
+    // Before return → preview
+    const used = this.usedQty[a.allocation_id];
+    if (used === undefined || used === null) {
+      return null;
+    }
+
+    return Math.max(a.allocated_quantity - used, 0);
   }
 
   // ----------------------------
-  // Submit return
+  // Submit usage + return
   // ----------------------------
-  submitReturn(a: any) {
-    const qty = this.returnMap[a.allocation_id];
+  submitUsageAndReturn(a: any) {
 
-    if (!qty || qty <= 0) {
-      this.showSnack('Enter a valid return quantity', 'error');
+    if (this.isLocked(a)) return;
+
+    const used = this.usedQty[a.allocation_id] || 0;
+    const damaged = this.damagedQty[a.allocation_id] || 0;
+
+    if (used <= 0) {
+      this.notify('Used quantity is required', 'error');
       return;
     }
 
-    if (qty > this.remaining(a)) {
-      this.showSnack(`Cannot return more than ${this.remaining(a)}`, 'error');
+    if (used + damaged > a.allocated_quantity) {
+      this.notify('Used + Damaged exceeds allocated quantity', 'error');
       return;
     }
+
+    const returned = a.allocated_quantity - used;
+
+    const ok = window.confirm(
+      `Confirm usage & return?\n\n` +
+      `Allocated : ${a.allocated_quantity}\n` +
+      `Used      : ${used}\n` +
+      `Damaged   : ${damaged}\n` +
+      `Returned  : ${returned}\n\n` +
+      `⚠ Damaged items are returned to ERP for review`
+    );
+
+    if (!ok) return;
 
     this.loading = true;
 
-    this.http.post(`${environment.apiUrl}/materials/return`, {
+    // Record USED
+    this.http.post(`${environment.apiUrl}/materials/usage`, {
       allocation_id: a.allocation_id,
-      quantity_returned: qty
+      quantity: used,
+      usage_type: 'USED'
     }).subscribe({
       next: () => {
-        this.showSnack(`Returned ${qty} successfully`, 'error');
-        this.returnMap[a.allocation_id] = 0;
-        this.loadAssignments();
+
+        // Record DAMAGED (optional)
+        if (damaged > 0) {
+          this.http.post(`${environment.apiUrl}/materials/usage`, {
+            allocation_id: a.allocation_id,
+            quantity: damaged,
+            usage_type: 'DAMAGED'
+          }).subscribe();
+        }
+
+        // Auto-return remaining (allocated - used)
+        this.http.post(
+          `${environment.apiUrl}/materials/return/${a.allocation_id}`,
+          {}
+        ).subscribe({
+          next: () => {
+            this.notify('Usage recorded & materials returned');
+            this.usedQty[a.allocation_id] = undefined!;
+            this.damagedQty[a.allocation_id] = undefined!;
+            this.loadAllocations();
+          },
+          error: () => this.notify('Return failed', 'error'),
+          complete: () => this.loading = false
+        });
+
       },
-      error: err => {
-        this.showSnack(err.error?.message || 'Return failed', 'error');
-      },
-      complete: () => {
+      error: () => {
+        this.notify('Usage recording failed', 'error');
         this.loading = false;
       }
     });

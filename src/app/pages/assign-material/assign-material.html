@@ -1,6 +1,5 @@
 <div class="card">
 
-  <!-- Header -->
   <div class="card-header flex-between">
     <h3>Assign Materials</h3>
   </div>
@@ -8,49 +7,62 @@
   <!-- Locator info -->
   <div *ngIf="locator" class="hint" style="margin-bottom: 14px;">
     <strong>Locator:</strong>
-    {{ locator.locator_name }} ({{ locator.locator_id }})
+    {{ locator.locator_code }} ({{ locator.locator_id }})
   </div>
 
-  <!-- Filters / Form Row -->
+  <!-- Error / Success -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+
   <div class="filters-row">
 
     <!-- Team -->
-    <div class="form-group inline">
-      <label>Team</label>
-      <select [(ngModel)]="selectedTeamId">
-        <option [ngValue]="null">Select team</option>
-        <option *ngFor="let t of teams" [value]="t.team_id">
-          {{ t.team_name }}
-        </option>
-      </select>
-    </div>
+<div class="form-group inline wide">
+  <label>Team</label>
+  <ng-select
+    [items]="teams"
+    bindLabel="team_name"
+    bindValue="team_id"
+    placeholder="Search team..."
+    [(ngModel)]="selectedTeamId"
+    (change)="onTeamSelected()"
+    [clearable]="true">
+  </ng-select>
+</div>
 
-    <!-- Material -->
-    <div class="form-group inline">
-      <label>Material</label>
-      <select [(ngModel)]="selectedMaterial">
-        <option [ngValue]="null">Select material</option>
+<!-- Material -->
+<div class="form-group inline wide">
+  <label>Material</label>
+  <ng-select
+    [items]="materials"
+    bindLabel="material_name"
+    placeholder="Search material..."
+    [(ngModel)]="selectedMaterial"
+    [disabled]="!selectedTeamId"
+    [clearable]="true">
 
-        <option
-          *ngFor="let m of materials"
-          [ngValue]="m"
-          [disabled]="m.remaining_quantity <= 0"
-        >
-          {{ m.material_name }}
-          ({{ m.remaining_quantity }} {{ m.uom }} available)
-        </option>
-      </select>
-    </div>
+    <ng-template ng-option-tmp let-item="item">
+      {{ item.material_name }}
+      — {{ item.remaining_quantity }} {{ item.erp_uom }}
+    </ng-template>
+
+  </ng-select>
+
+  <small *ngIf="!selectedTeamId" class="muted">
+    Select a team first
+  </small>
+</div>
+
 
     <!-- Quantity -->
     <div class="form-group inline">
       <label>Quantity</label>
       <input
         type="number"
-        class="qty-input"
         [(ngModel)]="quantity"
         min="1"
         [max]="selectedMaterial?.remaining_quantity"
+        [disabled]="!selectedMaterial"
         placeholder="Qty"
       />
     </div>
@@ -60,23 +72,16 @@
       <button
         class="btn primary"
         (click)="submit()"
-        [disabled]="loading"
-      >
+        [disabled]="loading || !selectedTeamId">
         {{ loading ? 'Assigning…' : 'Assign Material' }}
       </button>
     </div>
 
   </div>
 
-  <!-- Info box -->
-  <div
-    *ngIf="selectedMaterial"
-    class="badge green"
-    style="margin-top: 16px; display: inline-block;"
-  >
-    Remaining:
-    {{ selectedMaterial.remaining_quantity }}
-    {{ selectedMaterial.uom }}
+  <!-- Remaining -->
+  <div *ngIf="selectedMaterial" class="badge green" style="margin-top: 16px;">
+    Remaining: {{ selectedMaterial.remaining_quantity }} {{ selectedMaterial.erp_uom }}
   </div>
 
 </div>
