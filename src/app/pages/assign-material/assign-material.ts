@@ -46,7 +46,7 @@ export class AssignMaterialComponent implements OnInit {
   ngOnInit(): void {
 
     // read permission once
-    this.canAssign = StorageService.hasPermission('material.assign');
+    this.canAssign = StorageService.hasPermission('material.allocate');
 
     this.loadTeams();
     this.loadLocator();

@@ -9,9 +9,12 @@
     </span>
   </div>
 
-  <!-- Team selection -->
-  <div class="form-group wide">
+  <!-- Team -->
+  <div class="form-group wide"
+       *hasPermission="'material.allocate.bulk'">
+
     <label>Team</label>
+
     <ng-select
       [items]="teams"
       bindLabel="team_name"
@@ -22,8 +25,11 @@
     </ng-select>
   </div>
 
-  <!-- Materials table -->
-  <table class="table table--compact">
+  <!-- Materials -->
+  <table
+    class="table table--compact"
+    *hasPermission="'material.allocate.bulk'">
+
     <thead>
       <tr>
         <th style="width: 45%">Material</th>
@@ -34,7 +40,9 @@
     </thead>
 
     <tbody>
+
       <tr *ngFor="let row of rows; let i = index">
+
         <!-- Material -->
         <td>
           <ng-select
@@ -47,7 +55,8 @@
 
             <ng-template ng-option-tmp let-item="item">
               {{ item.material_name }}
-              — {{ remainingForRow(item.erp_code, i) }} {{ item.erp_uom }}
+              — {{ remainingForRow(item.erp_code, i) }}
+              {{ item.erp_uom }}
             </ng-template>
 
           </ng-select>
@@ -81,13 +90,19 @@
             Remove
           </button>
         </td>
+
       </tr>
+
     </tbody>
   </table>
 
   <!-- Actions -->
-  <div class="flex-between" style="margin-top: 16px">
-    <button class="btn ghost small" (click)="addRow()">
+  <div class="flex-between"
+       style="margin-top: 16px"
+       *hasPermission="'material.allocate.bulk'">
+
+    <button class="btn ghost small"
+            (click)="addRow()">
       + Add Row
     </button>
 
@@ -95,8 +110,11 @@
       class="btn primary"
       (click)="submit()"
       [disabled]="loading || !selectedTeamId">
+
       {{ loading ? 'Allocating…' : 'Allocate Materials' }}
+
     </button>
+
   </div>
 
   <!-- Feedback -->

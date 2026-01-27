@@ -24,7 +24,7 @@
       <label>Team</label>
 
       <ng-select
-        *hasPermission="'material.assign'"
+        *hasPermission="'material.allocate'"
         [items]="teams"
         bindLabel="team_name"
         bindValue="team_id"
@@ -50,7 +50,7 @@
       <label>Material</label>
 
       <ng-select
-        *hasPermission="'material.assign'"
+        *hasPermission="'material.allocate'"
         [items]="materials"
         bindLabel="material_name"
         placeholder="Search material..."
@@ -73,7 +73,7 @@
 
     <div
       class="form-group inline"
-      *hasPermission="'material.assign'"
+      *hasPermission="'material.allocate'"
     >
       <label>Quantity</label>
 
@@ -94,7 +94,7 @@
     <div
       class="form-group inline"
       style="align-self: flex-end;"
-      *hasPermission="'material.assign'"
+      *hasPermission="'material.allocate'"
     >
 
       <button
