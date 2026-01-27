@@ -1,59 +1,145 @@
-# AeMaterialFrontend
+# Resource Control Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.2.
+A role-based resource and material management system built with Angular for enterprise operational workflows.
 
-## Development server
+This frontend application provides administrators and operational staff with secure, permission-driven access to inventory allocation, usage tracking, audits, and ERP-integrated workflows.
 
-To start a local development server, run:
+This application delivers:
+
+- Role-Based Access Control (RBAC) UI enforcement
+- Permission-aware navigation and actions
+- Material allocation and return workflows
+- Locator-based inventory management
+- Team assignment system
+- Admin dashboards and statistics
+- User, Role & Permission management panels
+- Security audit trail viewing
+- JWT-based session handling
+- Route-guarded enterprise navigation
+
+---
+
+## Tech Stack
+
+- **Angular (Standalone Components)**
+- **TypeScript**
+- **RxJS**
+- **Angular Router**
+- **SCSS / CSS Variables**
+- **Angular Material (Snackbar)**
+- REST API integration
+- JWT Authentication
+
+---
+
+## Design Philosophy
+
+Enterprise systems succeed when:
+
+- access is explicit
+- actions are auditable
+- permissions are enforced at every layer
+- interfaces reflect backend authority
+- workflows prevent mistakes before they happen
+
+This frontend is intentionally designed to:
+
+- mirror backend security rules
+- hide unauthorized actions instead of merely blocking them
+- provide fast operational feedback
+- reduce risk during administrative operations
+- scale with ERP integrations and multi-database environments
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Angular CLI
+- Backend API running
+
+---
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd resource-control-frontend
+
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+
+```
+
+---
+
+## Environment Configuration
+
+Edit:
+
+src/environments/environment.ts
+
+Set the backend API URL:
+
+```bash
+export const environment = {
+  apiUrl: 'http://localhost:8000/api'
+};
+
+```
+
+---
+
+## Running the Server
+
+Start the development server with:
 
 ```bash
 ng serve
+
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to:
 
-## Code scaffolding
+```
+http://localhost:4200
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## API Integration
 
-## Building
+This frontend communicates with the Resource Control backend API for:
 
-To build the project run:
+* Authentication
+* ERP integration endpoints
+* Administrative CRUD services
+* Material allocation flows
+* Audit log retrieval
+* Role & permission synchronization
 
-```bash
-ng build
-```
+---
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Permissions-Driven UI
 
-## Running unit tests
+The system enforces authorization using:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+* Permission-based UI directives
+* Route guards
+* JWT-derived permission sets
+* Sidebar menu filtering
 
-```bash
-ng test
-```
+This ensures:
 
-## Running end-to-end tests
+> **No user can see or trigger an action they are not authorized to perform.**
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
