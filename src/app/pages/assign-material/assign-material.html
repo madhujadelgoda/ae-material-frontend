@@ -16,47 +16,67 @@
 
   <div class="filters-row">
 
-    <!-- Team -->
-<div class="form-group inline wide">
-  <label>Team</label>
-  <ng-select
-    [items]="teams"
-    bindLabel="team_name"
-    bindValue="team_id"
-    placeholder="Search team..."
-    [(ngModel)]="selectedTeamId"
-    (change)="onTeamSelected()"
-    [clearable]="true">
-  </ng-select>
-</div>
+    <!-- ======================
+         TEAM SELECT
+    ====================== -->
 
-<!-- Material -->
-<div class="form-group inline wide">
-  <label>Material</label>
-  <ng-select
-    [items]="materials"
-    bindLabel="material_name"
-    placeholder="Search material..."
-    [(ngModel)]="selectedMaterial"
-    [disabled]="!selectedTeamId"
-    [clearable]="true">
+    <div class="form-group inline wide">
+      <label>Team</label>
 
-    <ng-template ng-option-tmp let-item="item">
-      {{ item.material_name }}
-      — {{ item.remaining_quantity }} {{ item.erp_uom }}
-    </ng-template>
+      <ng-select
+        *hasPermission="'material.assign'"
+        [items]="teams"
+        bindLabel="team_name"
+        bindValue="team_id"
+        placeholder="Search team..."
+        [(ngModel)]="selectedTeamId"
+        (change)="onTeamSelected()"
+        [clearable]="true">
+      </ng-select>
 
-  </ng-select>
+      <small
+        *ngIf="!canAssign"
+        class="muted">
+        You do not have permission to assign materials
+      </small>
+    </div>
 
-  <small *ngIf="!selectedTeamId" class="muted">
-    Select a team first
-  </small>
-</div>
+    <!-- ======================
+         MATERIAL
+    ====================== -->
 
+    <div class="form-group inline wide">
 
-    <!-- Quantity -->
-    <div class="form-group inline">
+      <label>Material</label>
+
+      <ng-select
+        *hasPermission="'material.assign'"
+        [items]="materials"
+        bindLabel="material_name"
+        placeholder="Search material..."
+        [(ngModel)]="selectedMaterial"
+        [disabled]="!selectedTeamId"
+        [clearable]="true">
+
+        <ng-template ng-option-tmp let-item="item">
+          {{ item.material_name }}
+          — {{ item.remaining_quantity }} {{ item.erp_uom }}
+        </ng-template>
+
+      </ng-select>
+
+    </div>
+
+    <!-- ======================
+         QUANTITY
+    ====================== -->
+
+    <div
+      class="form-group inline"
+      *hasPermission="'material.assign'"
+    >
       <label>Quantity</label>
+
       <input
         type="number"
         [(ngModel)]="quantity"
@@ -67,21 +87,37 @@
       />
     </div>
 
-    <!-- Action -->
-    <div class="form-group inline" style="align-self: flex-end;">
+    <!-- ======================
+         ACTION
+    ====================== -->
+
+    <div
+      class="form-group inline"
+      style="align-self: flex-end;"
+      *hasPermission="'material.assign'"
+    >
+
       <button
         class="btn primary"
         (click)="submit()"
-        [disabled]="loading || !selectedTeamId">
+        [disabled]="loading || !selectedTeamId"
+      >
         {{ loading ? 'Assigning…' : 'Assign Material' }}
       </button>
+
     </div>
 
   </div>
 
   <!-- Remaining -->
-  <div *ngIf="selectedMaterial" class="badge green" style="margin-top: 16px;">
-    Remaining: {{ selectedMaterial.remaining_quantity }} {{ selectedMaterial.erp_uom }}
+  <div
+    *ngIf="selectedMaterial"
+    class="badge green"
+    style="margin-top: 16px;"
+  >
+    Remaining:
+    {{ selectedMaterial.remaining_quantity }}
+    {{ selectedMaterial.erp_uom }}
   </div>
 
 </div>

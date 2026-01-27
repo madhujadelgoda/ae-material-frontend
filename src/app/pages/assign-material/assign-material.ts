@@ -2,14 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 import { environment } from '../../../environments/environment';
 import { MaterialService } from '../../core/services/material.service';
-import { NgSelectModule } from '@ng-select/ng-select';
+
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { StorageService } from '../../core/services/storage.service';
 
 @Component({
   standalone: true,
   selector: 'app-assign-material',
-  imports: [CommonModule, FormsModule, NgSelectModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgSelectModule,
+    HasPermissionDirective 
+  ],
   templateUrl: './assign-material.html'
 })
 export class AssignMaterialComponent implements OnInit {
@@ -26,12 +35,19 @@ export class AssignMaterialComponent implements OnInit {
   success = '';
   error = '';
 
+  /** permission flag */
+  canAssign = false;
+
   constructor(
     private http: HttpClient,
     private materialService: MaterialService
   ) {}
 
   ngOnInit(): void {
+
+    // read permission once
+    this.canAssign = StorageService.hasPermission('material.assign');
+
     this.loadTeams();
     this.loadLocator();
   }
@@ -57,9 +73,12 @@ export class AssignMaterialComponent implements OnInit {
   }
 
   // -------------------------
-  // When team changes → load materials
+  // When team changes
   // -------------------------
   onTeamSelected() {
+
+    if (!this.canAssign) return;
+
     this.selectedMaterial = null;
     this.quantity = null;
 
@@ -78,6 +97,9 @@ export class AssignMaterialComponent implements OnInit {
   // Submit allocation
   // -------------------------
   submit() {
+
+    if (!this.canAssign) return;
+
     this.error = '';
     this.success = '';
 
@@ -97,7 +119,9 @@ export class AssignMaterialComponent implements OnInit {
     }
 
     if (this.quantity > this.selectedMaterial.remaining_quantity) {
-      this.error = `Only ${this.selectedMaterial.remaining_quantity} ${this.selectedMaterial.erp_uom} available`;
+      this.error =
+        `Only ${this.selectedMaterial.remaining_quantity}
+         ${this.selectedMaterial.erp_uom} available`;
       return;
     }
 
@@ -114,7 +138,7 @@ export class AssignMaterialComponent implements OnInit {
         this.quantity = null;
         this.selectedMaterial = null;
 
-        this.onTeamSelected(); // refresh availability
+        this.onTeamSelected();
       },
       error: err => {
         this.error = err.error?.detail || 'Allocation failed';
