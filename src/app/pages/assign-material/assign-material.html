@@ -1,13 +1,23 @@
 <div class="card">
 
-  <div class="card-header flex-between">
+  <!-- <div class="card-header flex-between">
     <h3>Assign Materials</h3>
-  </div>
+  </div> -->
 
   <!-- Locator info -->
-  <div *ngIf="locator" class="hint" style="margin-bottom: 14px;">
+  <!-- <div *ngIf="locator" class="hint" style="margin-bottom: 14px;">
     <strong>Locator:</strong>
     {{ locator.locator_code }} ({{ locator.locator_id }})
+  </div> -->
+
+
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Assign Materials</h3>
+
+    <span class="badge green" *ngIf="locator">
+      {{ locator.locator_code }}
+    </span>
   </div>
 
   <!-- Error / Success -->

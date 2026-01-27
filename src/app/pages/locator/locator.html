@@ -6,20 +6,20 @@
   </div>
 
   <div *ngIf="locator" class="filters-row">
-    <div class="form-group inline">
+    <!-- <div class="form-group inline">
       <label>ID</label>
       <div>{{ locator.locator_id }}</div>
-    </div>
+    </div> -->
 
     <div class="form-group inline">
       <label>Locator Code</label>
       <div>{{ locator.locator_code }}</div>
     </div>
 
-    <div class="form-group inline">
+    <!-- <div class="form-group inline">
       <label>Warehouse</label>
       <div>{{ locator.warehouse_id }}</div>
-    </div>
+    </div> -->
   </div>
 
   <div *ngIf="!locator && !error" class="muted">

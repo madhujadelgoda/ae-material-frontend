@@ -124,7 +124,12 @@
 
       <div>
         <div class="user-name">{{ username }}</div>
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <button
+          class="logout-btn"
+          (click)="confirmLogout()"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </div>

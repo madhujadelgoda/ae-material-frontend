@@ -1,3 +1,4 @@
+
 <div class="card">
 
   <div class="card-header flex-between">
@@ -5,6 +6,7 @@
   </div>
 
   <table class="table table--compact">
+
     <thead>
       <tr>
         <th>Team</th>
@@ -18,13 +20,15 @@
     </thead>
 
     <tbody>
+
       <tr *ngFor="let a of allocations">
+
         <td>{{ a.team_name }}</td>
         <td>{{ a.material_code }}</td>
 
         <td>{{ a.allocated_quantity }}</td>
 
-        <!-- Used -->
+        <!-- USED -->
         <td>
           <input
             class="qty-input"
@@ -32,11 +36,13 @@
             min="0"
             [max]="a.allocated_quantity"
             [(ngModel)]="usedQty[a.allocation_id]"
-            [disabled]="isLocked(a)"
+            [disabled]="
+              isLocked(a) || !canReturn
+            "
           />
         </td>
 
-        <!-- Damaged -->
+        <!-- DAMAGED -->
         <td>
           <input
             class="qty-input"
@@ -44,23 +50,32 @@
             min="0"
             [max]="a.allocated_quantity"
             [(ngModel)]="damagedQty[a.allocation_id]"
-            [disabled]="isLocked(a)"
+            [disabled]="
+              isLocked(a) || !canReturn
+            "
           />
         </td>
 
-        <!-- Returned -->
+        <!-- RETURNED -->
         <td>
           <span
             class="badge"
-            [ngClass]="isLocked(a) ? 'red' : 'green'">
-            {{ returnedQty(a) === null ? '—' : returnedQty(a) }}
+            [ngClass]="
+              isLocked(a) ? 'red' : 'green'
+            ">
+            {{ returnedQty(a) === null
+                ? '—'
+                : returnedQty(a)
+            }}
           </span>
         </td>
 
-        <!-- Action -->
+        <!-- ACTION -->
         <td>
+
           <button
             class="btn small primary"
+            *hasPermission="'material.return'"
             (click)="submitUsageAndReturn(a)"
             [disabled]="
               loading ||
@@ -68,11 +83,20 @@
               usedQty[a.allocation_id] === undefined ||
               usedQty[a.allocation_id] <= 0
             ">
-            {{ isLocked(a) ? 'Completed' : 'Confirm & Return' }}
+
+            {{ isLocked(a)
+                ? 'Completed'
+                : 'Confirm & Return'
+            }}
+
           </button>
+
         </td>
+
       </tr>
+
     </tbody>
+
   </table>
 
 </div>

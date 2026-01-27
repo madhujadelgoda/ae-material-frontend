@@ -32,7 +32,19 @@ export class SidebarComponent {
     return StorageService.hasRole('ADMIN');
   }
 
-  logout() {
+  confirmLogout(): void {
+    const confirmed = window.confirm(
+      'Are you sure you want to logout?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.logout();
+  }
+
+  private logout(): void {
     StorageService.clear();
     this.router.navigate(['/login']);
   }

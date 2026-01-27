@@ -3,12 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { environment } from '../../../environments/environment';
+
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { StorageService } from '../../core/services/storage.service';
 
 @Component({
   standalone: true,
   selector: 'app-return-material',
-  imports: [CommonModule, FormsModule, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatSnackBarModule,
+    HasPermissionDirective   
+  ],
   templateUrl: './return-material.html'
 })
 export class ReturnMaterialComponent implements OnInit {
@@ -20,19 +29,31 @@ export class ReturnMaterialComponent implements OnInit {
 
   loading = false;
 
+  /** permission */
+  canReturn = false;
+
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+
+    this.canReturn =
+      StorageService.hasPermission('material.return');
+
     this.loadAllocations();
   }
 
   // ----------------------------
   // Toast helper
   // ----------------------------
-  notify(message: string, type: 'success' | 'error' = 'success'): void {
+
+  notify(
+    message: string,
+    type: 'success' | 'error' = 'success'
+  ): void {
+
     this.snackBar.open(message, 'Close', {
       duration: 3500,
       horizontalPosition: 'right',
@@ -44,29 +65,32 @@ export class ReturnMaterialComponent implements OnInit {
   // ----------------------------
   // Load allocations
   // ----------------------------
+
   loadAllocations(): void {
+
     this.http
       .get<any[]>(`${environment.apiUrl}/materials/allocations`)
       .subscribe({
-        next: data => this.allocations = data,
-        error: () => this.notify('Failed to load allocations', 'error')
+        next: data => (this.allocations = data),
+        error: () =>
+          this.notify('Failed to load allocations', 'error')
       });
   }
 
   // ----------------------------
   // Lock row once returned
   // ----------------------------
+
   isLocked(a: any): boolean {
     return a.status === 'RETURNED';
   }
 
   // ----------------------------
-  // Returned quantity logic (FIXED)
+  // Returned preview
   // ----------------------------
-  
+
   returnedQty(a: any): number | null {
 
-    // After return → trust backend
     if (this.isLocked(a)) {
       return a.returned_quantity;
     }
@@ -79,31 +103,42 @@ export class ReturnMaterialComponent implements OnInit {
     }
 
     return Math.max(
-      a.allocated_quantity - used,
+      a.allocated_quantity - used - damaged,
       0
     );
   }
 
+  // ----------------------------
   // Submit usage + return
+  // ----------------------------
+
   submitUsageAndReturn(a: any): void {
+
+    if (!this.canReturn) return;
 
     if (this.isLocked(a) || this.loading) return;
 
     const used = this.usedQty[a.allocation_id] || 0;
     const damaged = this.damagedQty[a.allocation_id] || 0;
 
-    // MUST have at least one value
     if (used + damaged <= 0) {
-      this.notify('Used or Damaged quantity is required', 'error');
+      this.notify(
+        'Used or Damaged quantity is required',
+        'error'
+      );
       return;
     }
 
     if (used + damaged > a.allocated_quantity) {
-      this.notify('Used + Damaged exceeds allocated quantity', 'error');
+      this.notify(
+        'Used + Damaged exceeds allocated quantity',
+        'error'
+      );
       return;
     }
 
-    const returned = a.allocated_quantity - used;
+    const returned =
+      a.allocated_quantity - used - damaged;
 
     const ok = window.confirm(
       `Confirm usage & return?\n\n` +
@@ -118,59 +153,84 @@ export class ReturnMaterialComponent implements OnInit {
 
     this.loading = true;
 
+    // ----------------------------
     // Record USED
-    this.http.post(`${environment.apiUrl}/materials/usage`, {
-      allocation_id: a.allocation_id,
-      quantity: used,
-      usage_type: 'USED',
-      remarks: null
-    }).subscribe({
-      next: () => {
+    // ----------------------------
 
-        // Record DAMAGED
-        const damaged$ = damaged > 0
-          ? this.http.post(`${environment.apiUrl}/materials/usage`, {
-              allocation_id: a.allocation_id,
-              quantity: damaged,
-              usage_type: 'DAMAGED',
-              remarks: null
-            })
-          : null;
+    this.http
+      .post(`${environment.apiUrl}/materials/usage`, {
+        allocation_id: a.allocation_id,
+        quantity: used,
+        usage_type: 'USED',
+        remarks: null
+      })
+      .subscribe({
+        next: () => {
 
-        const proceedToReturn = () => {
-          // Auto return remaining
-          this.http.post(
-            `${environment.apiUrl}/materials/return/${a.allocation_id}`,
-            {}
-          ).subscribe({
-            next: () => {
-              this.notify('Usage recorded & materials returned');
-              delete this.usedQty[a.allocation_id];
-              delete this.damagedQty[a.allocation_id];
-              this.loadAllocations();
-            },
-            error: () => this.notify('Return failed', 'error'),
-            complete: () => this.loading = false
-          });
-        };
+          // ----------------------------
+          // Record DAMAGED
+          // ----------------------------
 
-        if (damaged$) {
-          damaged$.subscribe({
-            next: proceedToReturn,
-            error: () => {
-              this.notify('Damaged usage failed', 'error');
-              this.loading = false;
-            }
-          });
-        } else {
-          proceedToReturn();
+          const damaged$ =
+            damaged > 0
+              ? this.http.post(
+                  `${environment.apiUrl}/materials/usage`,
+                  {
+                    allocation_id: a.allocation_id,
+                    quantity: damaged,
+                    usage_type: 'DAMAGED',
+                    remarks: null
+                  }
+                )
+              : null;
+
+          const proceedToReturn = () => {
+
+            this.http
+              .post(
+                `${environment.apiUrl}/materials/return/${a.allocation_id}`,
+                {}
+              )
+              .subscribe({
+                next: () => {
+                  this.notify(
+                    'Usage recorded & materials returned'
+                  );
+
+                  delete this.usedQty[a.allocation_id];
+                  delete this.damagedQty[a.allocation_id];
+
+                  this.loadAllocations();
+                },
+                error: () =>
+                  this.notify('Return failed', 'error'),
+                complete: () => (this.loading = false)
+              });
+          };
+
+          if (damaged$) {
+            damaged$.subscribe({
+              next: proceedToReturn,
+              error: () => {
+                this.notify(
+                  'Damaged usage failed',
+                  'error'
+                );
+                this.loading = false;
+              }
+            });
+          } else {
+            proceedToReturn();
+          }
+        },
+
+        error: () => {
+          this.notify(
+            'Usage recording failed',
+            'error'
+          );
+          this.loading = false;
         }
-
-      },
-      error: () => {
-        this.notify('Usage recording failed', 'error');
-        this.loading = false;
-      }
-    });
+      });
   }
 }
