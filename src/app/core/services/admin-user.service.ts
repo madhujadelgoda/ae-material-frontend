@@ -5,13 +5,11 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class AdminUserService {
 
-  private base = `${environment.apiUrl}/admin/users`;
+  private base = `${environment.apiUrl}/admin/users/`;
 
   constructor(private http: HttpClient) {}
 
-  // ======================
-  // USERS
-  // ======================
+  //  users
   getUsers() {
     return this.http.get<any[]>(this.base);
   }

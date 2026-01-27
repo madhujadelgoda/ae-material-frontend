@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AdminRoleService {
-  private base = `${environment.apiUrl}/admin/roles`;
+  private base = `${environment.apiUrl}/admin/roles/`;
 
   constructor(private http: HttpClient) {}
 
@@ -17,10 +17,10 @@ export class AdminRoleService {
   }
 
   updateRole(role_id: number, description: string | null) {
-    return this.http.put(`${this.base}/${role_id}`, { description });
+    return this.http.put(`${this.base}${role_id}`, { description });
   }
 
   deleteRole(role_id: number) {
-    return this.http.delete(`${this.base}/${role_id}`);
+    return this.http.delete(`${this.base}${role_id}`);
   }
 }

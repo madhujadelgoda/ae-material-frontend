@@ -1,10 +1,27 @@
 <div class="card">
+
+  <!-- =========================
+       HEADER
+  ========================== -->
   <div class="card-header flex-between">
     <h3>Users</h3>
-    <button class="btn primary" (click)="openCreate()">+ New User</button>
+
+    <!-- Create User -->
+    <button
+      class="btn primary"
+      (click)="openCreate()"
+      *hasPermission="'user.create'"
+    >
+      + New User
+    </button>
   </div>
 
+  <!-- =========================
+       USERS TABLE
+  ========================== -->
+
   <table class="table">
+
     <thead>
       <tr>
         <th>Username</th>
@@ -16,7 +33,9 @@
     </thead>
 
     <tbody>
+
       <tr *ngFor="let u of users">
+
         <!-- Username -->
         <td>{{ u.username }}</td>
 
@@ -50,15 +69,22 @@
           </span>
         </td>
 
-        <!-- Actions -->
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+
         <td>
+
+          <!-- Edit -->
           <button
             class="btn small"
             (click)="openEdit(u)"
+            *hasPermission="'user.update'"
           >
             Edit
           </button>
 
+          <!-- Reset Password (NO permission gate) -->
           <button
             class="btn small"
             (click)="openReset(u)"
@@ -66,6 +92,7 @@
             Reset
           </button>
 
+          <!-- Enable / Disable (NO permission gate) -->
           <button
             class="btn warn small"
             (click)="toggleStatus(u)"
@@ -73,19 +100,29 @@
             {{ u.status === 'ACTIVE' ? 'Disable' : 'Enable' }}
           </button>
 
+          <!-- Delete -->
           <button
             class="btn danger small"
             (click)="deleteUser(u)"
+            *hasPermission="'user.delete'"
           >
             Delete
           </button>
+
         </td>
+
       </tr>
+
     </tbody>
+
   </table>
+
 </div>
 
-<!-- Create / Edit User Modal -->
+<!-- =========================
+     CREATE / EDIT MODAL
+========================== -->
+
 <app-user-form-modal
   *ngIf="showForm"
   [user]="selectedUser"
@@ -93,7 +130,10 @@
   (saved)="onSaved()"
 ></app-user-form-modal>
 
-<!-- Reset Password Modal -->
+<!-- =========================
+     RESET PASSWORD MODAL
+========================== -->
+
 <app-reset-password-modal
   *ngIf="showReset"
   [user]="selectedUser"

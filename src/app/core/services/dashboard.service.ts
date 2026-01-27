@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface DashboardSummary {
   totalMaterials: number;
@@ -16,11 +16,14 @@ export interface DashboardSummary {
   providedIn: 'root'
 })
 export class DashboardService {
+
+  private base = `${environment.apiUrl}/dashboard`;
+
   constructor(private http: HttpClient) {}
 
   getSummary(): Observable<DashboardSummary> {
     return this.http.get<DashboardSummary>(
-      `${environment.apiUrl}/dashboard/summary`
+      `${this.base}/summary`
     );
   }
 }

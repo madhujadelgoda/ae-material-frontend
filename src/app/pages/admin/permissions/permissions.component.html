@@ -1,35 +1,45 @@
-<!-- src/app/pages/admin/permissions/permissions.component.html -->
+<!-- =========================
+     CREATE PERMISSION
+========================= -->
 
-<!-- Create Permission -->
-<div class="card">
-  <div class="card-header">
-    <h3>Create Permission</h3>
+<ng-container *hasPermission="'permission.create'">
+
+  <div class="card">
+
+    <div class="card-header">
+      <h3>Create Permission</h3>
+    </div>
+
+    <div class="form-group">
+      <label>Permission Key</label>
+      <input
+        type="text"
+        placeholder="e.g. material.allocate"
+        [(ngModel)]="key"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <input
+        type="text"
+        placeholder="Short description"
+        [(ngModel)]="desc"
+      />
+    </div>
+
+    <button class="btn primary" (click)="create()">
+      Create Permission
+    </button>
+
   </div>
 
-  <div class="form-group">
-    <label>Permission Key</label>
-    <input
-      type="text"
-      placeholder="e.g. MATERIAL_ALLOCATE"
-      [(ngModel)]="key"
-    />
-  </div>
+</ng-container>
 
-  <div class="form-group">
-    <label>Description</label>
-    <input
-      type="text"
-      placeholder="Short description"
-      [(ngModel)]="desc"
-    />
-  </div>
+<!-- =========================
+     PERMISSIONS TABLE
+========================= -->
 
-  <button class="btn primary" (click)="create()">
-    Create Permission
-  </button>
-</div>
-
-<!-- Permissions Table -->
 <div class="card" style="margin-top: 20px">
 
   <div class="card-header flex-between">
@@ -43,6 +53,7 @@
   </div>
 
   <table class="table table--compact">
+
     <thead>
       <tr>
         <th style="width: 30%">Permission Key</th>
@@ -52,44 +63,80 @@
     </thead>
 
     <tbody>
+
       <tr *ngFor="let p of permissions">
 
+        <!-- KEY -->
         <td>
           <code>{{ p.permission_key }}</code>
         </td>
 
+        <!-- DESCRIPTION -->
         <td>
+
+          <!-- view -->
           <span *ngIf="editing?.permission_id !== p.permission_id">
             {{ p.description || '—' }}
           </span>
 
-          <input
-            *ngIf="editing?.permission_id === p.permission_id"
-            type="text"
-            [(ngModel)]="desc"
-          />
+          <!-- edit -->
+          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+            <input
+              *hasPermission="'permission.update'"
+              type="text"
+              [(ngModel)]="desc"
+            />
+          </ng-container>
+
         </td>
 
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+
         <td>
+
+          <!-- VIEW MODE -->
           <ng-container *ngIf="editing?.permission_id !== p.permission_id">
-            <button class="btn small" (click)="startEdit(p)">
+
+            <button
+              class="btn small"
+              (click)="startEdit(p)"
+              *hasPermission="'permission.update'"
+            >
               Edit
             </button>
 
-            <button class="btn danger small" (click)="delete(p)">
+            <button
+              class="btn danger small"
+              (click)="delete(p)"
+              *hasPermission="'permission.delete'"
+            >
               Delete
             </button>
+
           </ng-container>
 
+          <!-- EDIT MODE -->
           <ng-container *ngIf="editing?.permission_id === p.permission_id">
-            <button class="btn small primary" (click)="saveEdit()">
+
+            <button
+              class="btn small primary"
+              (click)="saveEdit()"
+              *hasPermission="'permission.update'"
+            >
               Save
             </button>
 
-            <button class="btn small ghost" (click)="cancelEdit()">
+            <button
+              class="btn small ghost"
+              (click)="cancelEdit()"
+            >
               Cancel
             </button>
+
           </ng-container>
+
         </td>
 
       </tr>
@@ -99,6 +146,9 @@
           No permissions found
         </td>
       </tr>
+
     </tbody>
+
   </table>
+
 </div>

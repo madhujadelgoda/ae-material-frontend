@@ -38,9 +38,7 @@ export class BulkAllocateComponent implements OnInit {
     this.addRow();
   }
 
-  // -----------------------------
   // Load base data
-  // -----------------------------
   loadTeams() {
     this.http.get<any[]>(`${environment.apiUrl}/teams`)
       .subscribe(data => this.teams = data);
@@ -56,9 +54,7 @@ export class BulkAllocateComponent implements OnInit {
       .subscribe(data => this.materials = data);
   }
 
-  // -----------------------------
   // Row helpers
-  // -----------------------------
   addRow() {
     this.rows.push({
       material_code: null,
@@ -100,9 +96,7 @@ export class BulkAllocateComponent implements OnInit {
     );
   }
 
-  // -----------------------------
   // Submit bulk allocation
-  // -----------------------------
   submit() {
     this.error = '';
     this.success = '';

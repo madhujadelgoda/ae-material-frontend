@@ -25,14 +25,14 @@ export class ReturnMaterialComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadAllocations();
   }
 
   // ----------------------------
-  // Toast
+  // Toast helper
   // ----------------------------
-  notify(message: string, type: 'success' | 'error' = 'success') {
+  notify(message: string, type: 'success' | 'error' = 'success'): void {
     this.snackBar.open(message, 'Close', {
       duration: 3500,
       horizontalPosition: 'right',
@@ -44,7 +44,7 @@ export class ReturnMaterialComponent implements OnInit {
   // ----------------------------
   // Load allocations
   // ----------------------------
-  loadAllocations() {
+  loadAllocations(): void {
     this.http
       .get<any[]>(`${environment.apiUrl}/materials/allocations`)
       .subscribe({
@@ -61,12 +61,9 @@ export class ReturnMaterialComponent implements OnInit {
   }
 
   // ----------------------------
-  // Returned quantity logic
+  // Returned quantity logic (FIXED)
   // ----------------------------
-  /**
-   * BEFORE return  -> preview = allocated - used
-   * AFTER return   -> show backend returned_quantity
-   */
+  
   returnedQty(a: any): number | null {
 
     // After return → trust backend
@@ -74,27 +71,30 @@ export class ReturnMaterialComponent implements OnInit {
       return a.returned_quantity;
     }
 
-    // Before return → preview
-    const used = this.usedQty[a.allocation_id];
-    if (used === undefined || used === null) {
+    const used = this.usedQty[a.allocation_id] || 0;
+    const damaged = this.damagedQty[a.allocation_id] || 0;
+
+    if (used + damaged === 0) {
       return null;
     }
 
-    return Math.max(a.allocated_quantity - used, 0);
+    return Math.max(
+      a.allocated_quantity - used,
+      0
+    );
   }
 
-  // ----------------------------
   // Submit usage + return
-  // ----------------------------
-  submitUsageAndReturn(a: any) {
+  submitUsageAndReturn(a: any): void {
 
-    if (this.isLocked(a)) return;
+    if (this.isLocked(a) || this.loading) return;
 
     const used = this.usedQty[a.allocation_id] || 0;
     const damaged = this.damagedQty[a.allocation_id] || 0;
 
-    if (used <= 0) {
-      this.notify('Used quantity is required', 'error');
+    // MUST have at least one value
+    if (used + damaged <= 0) {
+      this.notify('Used or Damaged quantity is required', 'error');
       return;
     }
 
@@ -122,33 +122,49 @@ export class ReturnMaterialComponent implements OnInit {
     this.http.post(`${environment.apiUrl}/materials/usage`, {
       allocation_id: a.allocation_id,
       quantity: used,
-      usage_type: 'USED'
+      usage_type: 'USED',
+      remarks: null
     }).subscribe({
       next: () => {
 
-        // Record DAMAGED (optional)
-        if (damaged > 0) {
-          this.http.post(`${environment.apiUrl}/materials/usage`, {
-            allocation_id: a.allocation_id,
-            quantity: damaged,
-            usage_type: 'DAMAGED'
-          }).subscribe();
-        }
+        // Record DAMAGED
+        const damaged$ = damaged > 0
+          ? this.http.post(`${environment.apiUrl}/materials/usage`, {
+              allocation_id: a.allocation_id,
+              quantity: damaged,
+              usage_type: 'DAMAGED',
+              remarks: null
+            })
+          : null;
 
-        // Auto-return remaining (allocated - used)
-        this.http.post(
-          `${environment.apiUrl}/materials/return/${a.allocation_id}`,
-          {}
-        ).subscribe({
-          next: () => {
-            this.notify('Usage recorded & materials returned');
-            this.usedQty[a.allocation_id] = undefined!;
-            this.damagedQty[a.allocation_id] = undefined!;
-            this.loadAllocations();
-          },
-          error: () => this.notify('Return failed', 'error'),
-          complete: () => this.loading = false
-        });
+        const proceedToReturn = () => {
+          // Auto return remaining
+          this.http.post(
+            `${environment.apiUrl}/materials/return/${a.allocation_id}`,
+            {}
+          ).subscribe({
+            next: () => {
+              this.notify('Usage recorded & materials returned');
+              delete this.usedQty[a.allocation_id];
+              delete this.damagedQty[a.allocation_id];
+              this.loadAllocations();
+            },
+            error: () => this.notify('Return failed', 'error'),
+            complete: () => this.loading = false
+          });
+        };
+
+        if (damaged$) {
+          damaged$.subscribe({
+            next: proceedToReturn,
+            error: () => {
+              this.notify('Damaged usage failed', 'error');
+              this.loading = false;
+            }
+          });
+        } else {
+          proceedToReturn();
+        }
 
       },
       error: () => {

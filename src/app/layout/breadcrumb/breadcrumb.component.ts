@@ -5,7 +5,9 @@ import { BreadcrumbService, Breadcrumb } from '../../core/services/breadcrumb.se
 @Component({
   standalone: true,
   selector: 'app-breadcrumb',
-  imports: [CommonModule],
+  imports: [
+    CommonModule
+  ],
   template: `
     <div class="breadcrumb">
       <ng-container *ngFor="let b of breadcrumbs; let last = last">

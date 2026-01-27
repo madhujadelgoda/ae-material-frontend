@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './pages/login/login';
 import { LayoutComponent } from './layout/layout';
+
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { LocatorComponent } from './pages/locator/locator';
 import { AssignMaterialComponent } from './pages/assign-material/assign-material';
@@ -10,63 +12,38 @@ import { BulkAllocateComponent } from './pages/bulk-allocate/bulk-allocate';
 import { UsersComponent } from './pages/admin/users/users.component';
 import { RolesComponent } from './pages/admin/roles/roles.component';
 import { PermissionsComponent } from './pages/admin/permissions/permissions.component';
+import { RolePermissionsComponent } from './pages/admin/role-permissions/role-permissions.component';
+
+import { AuditComponent } from './pages/admin/audit/audit.component';
+import { OperationsAuditComponent } from './pages/admin/audit/operations-audit/operations-audit.component';
+import { SecurityAuditComponent } from './pages/admin/audit/security-audit/security-audit.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
-
-// export const routes: Routes = [
-//   // Login page (no layout)
-//   { path: 'login', component: LoginComponent },
-
-//   // Protected layout
-//   {
-//     path: '',
-//     component: LayoutComponent,
-//     canActivate: [authGuard],
-//     children: [
-
-//       { path: 'dashboard', component: DashboardComponent },
-//       { path: 'locator', component: LocatorComponent },
-//       { path: 'assign', component: AssignMaterialComponent },
-//       { path: 'return', component: ReturnMaterialComponent },
-//       { path: 'bulk-allocate', component: BulkAllocateComponent },
-
-//       // ADMIN ROUTES (inside layout)
-//       {
-//         path: 'admin/users',
-//         component: UsersComponent,
-//         canActivate: [roleGuard('ADMIN')]
-//       },
-//       {
-//         path: 'admin/roles',
-//         component: RolesComponent,
-//         canActivate: [roleGuard('ADMIN')]
-//       },
-//       {
-//         path: 'admin/permissions',
-//         component: PermissionsComponent,
-//         canActivate: [roleGuard('ADMIN')]
-//       },
-
-//       // default
-//       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-//     ]
-//   },
-
-//   // fallback
-//   { path: '**', redirectTo: 'dashboard' }
-// ];
-
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
 
+  // ======================
+  // AUTH
+  // ======================
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+
+  // ======================
+  // PROTECTED APP
+  // ======================
   {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
 
+      // ======================
+      // MAIN
+      // ======================
       {
         path: 'dashboard',
         component: DashboardComponent,
@@ -76,50 +53,125 @@ export const routes: Routes = [
       {
         path: 'locator',
         component: LocatorComponent,
+        canActivate: [permissionGuard('erp.locator.view')],
         data: { title: 'My Locator', breadcrumb: 'My Locator' }
       },
 
+      // ======================
+      // MATERIAL OPERATIONS
+      // ======================
       {
         path: 'assign',
         component: AssignMaterialComponent,
+        canActivate: [permissionGuard('material.allocate')],
         data: { title: 'Assign Materials', breadcrumb: 'Assign' }
       },
 
       {
         path: 'return',
         component: ReturnMaterialComponent,
+        canActivate: [permissionGuard('material.return')],
         data: { title: 'Return Materials', breadcrumb: 'Return' }
       },
 
       {
         path: 'bulk-allocate',
         component: BulkAllocateComponent,
+        canActivate: [permissionGuard('material.allocate.bulk')],
         data: { title: 'Bulk Allocation', breadcrumb: 'Bulk Allocate' }
       },
 
+      // ======================
       // ADMIN
+      // ======================
       {
         path: 'admin/users',
         component: UsersComponent,
-        canActivate: [roleGuard('ADMIN')],
+        canActivate: [
+          roleGuard('ADMIN'),
+          permissionGuard('user.view')
+        ],
         data: { title: 'Users', breadcrumb: 'Users' }
       },
+
       {
         path: 'admin/roles',
         component: RolesComponent,
-        canActivate: [roleGuard('ADMIN')],
+        canActivate: [
+          roleGuard('ADMIN'),
+          permissionGuard('role.view')
+        ],
         data: { title: 'Roles', breadcrumb: 'Roles' }
       },
+
       {
         path: 'admin/permissions',
         component: PermissionsComponent,
-        canActivate: [roleGuard('ADMIN')],
+        canActivate: [
+          roleGuard('ADMIN'),
+          permissionGuard('permission.view')
+        ],
         data: { title: 'Permissions', breadcrumb: 'Permissions' }
       },
 
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      {
+        path: 'admin/role-permissions',
+        component: RolePermissionsComponent,
+        canActivate: [
+          roleGuard('ADMIN'),
+          permissionGuard('role.permission.assign')
+        ],
+        data: { title: 'Role Permissions', breadcrumb: 'Role Permissions' }
+      },
+
+      // ======================
+      // AUDIT
+      // ======================
+      {
+        path: 'admin/audit',
+        component: AuditComponent,
+        canActivate: [roleGuard('ADMIN')],
+        data: { title: 'Audit', breadcrumb: 'Audit' },
+        children: [
+
+          {
+            path: '',
+            redirectTo: 'operations',
+            pathMatch: 'full'
+          },
+
+          {
+            path: 'operations',
+            component: OperationsAuditComponent,
+            canActivate: [permissionGuard('audit.operations.view')],
+            data: { title: 'Operations Audit', breadcrumb: 'Operations' }
+          },
+
+          {
+            path: 'security',
+            component: SecurityAuditComponent,
+            canActivate: [permissionGuard('audit.security.view')],
+            data: { title: 'Security Audit', breadcrumb: 'Security' }
+          }
+        ]
+      },
+
+      // ======================
+      // DEFAULT
+      // ======================
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
     ]
   },
 
-  { path: '**', redirectTo: 'dashboard' }
+  // ======================
+  // FALLBACK
+  // ======================
+  {
+    path: '**',
+    redirectTo: 'dashboard'
+  }
 ];

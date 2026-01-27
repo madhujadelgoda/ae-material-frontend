@@ -163,7 +163,6 @@
 }
 
 
-
 /* reset password model */
 /* Backdrop overlay */
 .modal-backdrop {
@@ -398,10 +397,7 @@
   font-weight: 500;
 }
 
-/* ============================= */
-/* NG-SELECT CUSTOM STYLING */
-/* ============================= */
-
+/* NG-SELECT custom styling */
 ng-select {
   width: 100%;
   font-size: 13px;
@@ -477,10 +473,7 @@ ng-select {
   color: #6b7280;
 }
 
-/* ============================= */
-/* WIDE DROPDOWN FIELDS */
-/* ============================= */
-
+/* Wide dropdown fields */
 .form-group.inline.wide {
   min-width: 320px;
   flex: 1 1 320px;
@@ -489,4 +482,71 @@ ng-select {
 /* Ensure ng-select stretches fully */
 .form-group.inline.wide ng-select {
   width: 100%;
+}
+
+/* Role permissions UI */
+.permission-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-white);
+}
+
+/* Group wrapper */
+.permission-group {
+  margin-bottom: 18px;
+}
+
+/* Group header */
+.permission-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--border-light);
+}
+
+/* Group title */
+.permission-group-header strong {
+  font-size: 13px;
+  color: #374151;
+  letter-spacing: 0.04em;
+}
+
+/* Group actions */
+.group-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Permission item */
+.permission-item {
+  display: grid;
+  grid-template-columns: 22px 1fr; /* fixed checkbox column */
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* Checkbox alignment */
+.permission-item input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  justify-self: center;
+}
+
+/* Hover effect */
+.permission-item:hover {
+  background: var(--bg-soft);
+}
+
+/* Improve click UX */
+.permission-item:active {
+  background: rgba(37, 99, 235, 0.08);
 }
