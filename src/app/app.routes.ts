@@ -26,8 +26,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { permissionGuard } from './core/guards/permission.guard';
 
-import { TeamAllocationsComponent } 
-  from './pages/locator/team-allocations/team-allocations';
+import { TeamAllocationsComponent } from './pages/locator/team-allocations/team-allocations';
+import { LocatorInventoryComponent } from './pages/locator/inventory';
 
 
 export const routes: Routes = [
@@ -67,17 +67,29 @@ export const routes: Routes = [
   ],
   data: { title: 'Locator Overview' }
 },
-
-
-      {
+{
   path: 'locator',
   component: LocatorComponent,
   canActivate: [permissionGuard('erp.locator.view')],
-  data: { title: 'My Locator', breadcrumb: 'My Locator' },
+  data: {
+    title: 'My Locator',
+    breadcrumb: 'My Locator'
+  },
 
   children: [
 
+    // ============================
+    // DEFAULT TAB → INVENTORY
+    // ============================
+    {
+      path: '',
+      component: LocatorInventoryComponent,
+      pathMatch: 'full'
+    },
+
+    // ============================
     // TEAM ALLOCATIONS TAB
+    // ============================
     {
       path: 'team-allocations',
       component: TeamAllocationsComponent,
@@ -92,7 +104,6 @@ export const routes: Routes = [
 
   ]
 },
-
 
       // ======================
       // MATERIAL OPERATIONS

@@ -4,6 +4,21 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../../environments/environment';
 
+interface TeamRow {
+  team_id: number;
+  team_name: string;
+
+  material_code: string;
+  material_name: string;
+
+  allocated_quantity: number;
+  used_quantity: number;
+  damaged_quantity: number;
+  returned_quantity: number;
+
+  remaining_with_team: number;
+}
+
 @Component({
   standalone: true,
   selector: 'app-team-allocations',
@@ -12,7 +27,12 @@ import { environment } from '../../../../environments/environment';
 })
 export class TeamAllocationsComponent implements OnInit {
 
-  rows: any[] = [];
+  rows: TeamRow[] = [];
+  filteredRows: TeamRow[] = [];
+
+  teams: { team_id: number; team_name: string }[] = [];
+
+  selectedTeamId: number | null = null;
 
   loading = false;
   error: string | null = null;
@@ -33,10 +53,27 @@ export class TeamAllocationsComponent implements OnInit {
     this.error = null;
 
     this.http
-      .get<any[]>(`${environment.apiUrl}/materials/team-allocations`)
+      .get<TeamRow[]>(`${environment.apiUrl}/materials/team-allocations`)
       .subscribe({
         next: data => {
           this.rows = data;
+
+          // Extract unique teams
+          const map = new Map<number, string>();
+
+          data.forEach(r => {
+            map.set(r.team_id, r.team_name);
+          });
+
+          this.teams = Array.from(map.entries()).map(
+            ([team_id, team_name]) => ({
+              team_id,
+              team_name
+            })
+          );
+
+          this.filteredRows = [...this.rows];
+
           this.loading = false;
         },
         error: err => {
@@ -45,6 +82,24 @@ export class TeamAllocationsComponent implements OnInit {
           this.loading = false;
         }
       });
+  }
+
+  // ==============================
+  // FILTER BY TEAM
+  // ==============================
+
+  selectTeam(teamId: number | null) {
+
+    this.selectedTeamId = teamId;
+
+    if (!teamId) {
+      this.filteredRows = [...this.rows];
+      return;
+    }
+
+    this.filteredRows = this.rows.filter(
+      r => r.team_id === teamId
+    );
   }
 
 }

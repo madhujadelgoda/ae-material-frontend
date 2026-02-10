@@ -1,10 +1,60 @@
 <div class="card">
 
-  <div class="card-header">
+  <div class="card-header flex-between">
     <h3>Team Allocations</h3>
   </div>
 
-  <table class="table table--compact" *ngIf="rows.length">
+  <!-- ===========================
+       TEAM FILTER
+  ============================ -->
+
+  <div class="filters-row">
+
+    <div class="form-group inline">
+      <label>Filter by Team</label>
+
+      <select
+        class="input"
+        (change)="selectTeam($any($event.target).value ? +$any($event.target).value : null)"
+      >
+        <option value="">All Teams</option>
+
+        <option
+          *ngFor="let t of teams"
+          [value]="t.team_id"
+        >
+          {{ t.team_name }}
+        </option>
+
+      </select>
+    </div>
+
+  </div>
+
+  <!-- ===========================
+       LOADING
+  ============================ -->
+
+  <div *ngIf="loading" class="muted">
+    Loading team allocations...
+  </div>
+
+  <!-- ===========================
+       ERROR
+  ============================ -->
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- ===========================
+       TABLE
+  ============================ -->
+
+  <table
+    class="table table--compact"
+    *ngIf="!loading && filteredRows.length"
+  >
 
     <thead>
       <tr>
@@ -21,14 +71,22 @@
 
     <tbody>
 
-      <tr *ngFor="let r of rows">
+      <tr *ngFor="let r of filteredRows">
 
         <td>{{ r.team_name }}</td>
-        <td>{{ r.material_code }}</td>
+
+        <td>
+          <code>{{ r.material_code }}</code>
+        </td>
+
         <td>{{ r.material_name }}</td>
+
         <td>{{ r.allocated_quantity }}</td>
+
         <td>{{ r.used_quantity }}</td>
+
         <td>{{ r.damaged_quantity }}</td>
+
         <td>{{ r.returned_quantity }}</td>
 
         <td>
@@ -46,5 +104,14 @@
     </tbody>
 
   </table>
+
+  <!-- EMPTY -->
+
+  <div
+    *ngIf="!loading && !filteredRows.length"
+    class="muted"
+  >
+    No team allocations found.
+  </div>
 
 </div>
