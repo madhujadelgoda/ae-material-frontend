@@ -1,0 +1,50 @@
+<div class="card">
+
+  <div class="card-header">
+    <h3>Team Allocations</h3>
+  </div>
+
+  <table class="table table--compact" *ngIf="rows.length">
+
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>ERP Code</th>
+        <th>Material</th>
+        <th>Allocated</th>
+        <th>Used</th>
+        <th>Damaged</th>
+        <th>Returned</th>
+        <th>With Team</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let r of rows">
+
+        <td>{{ r.team_name }}</td>
+        <td>{{ r.material_code }}</td>
+        <td>{{ r.material_name }}</td>
+        <td>{{ r.allocated_quantity }}</td>
+        <td>{{ r.used_quantity }}</td>
+        <td>{{ r.damaged_quantity }}</td>
+        <td>{{ r.returned_quantity }}</td>
+
+        <td>
+          <span
+            class="badge"
+            [class.green]="r.remaining_with_team > 0"
+            [class.red]="r.remaining_with_team === 0"
+          >
+            {{ r.remaining_with_team }}
+          </span>
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

@@ -20,6 +20,15 @@
     </a>
 
     <a
+      *hasPermission="'admin.locator.view'"
+      routerLink="/admin/locators"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      Locator Overview
+    </a>
+
+    <a
       *hasPermission="'erp.locator.view'"
       routerLink="/locator"
       routerLinkActive="active"

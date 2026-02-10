@@ -1,0 +1,240 @@
+<!-- ===============================
+     PAGE TITLE
+================================ -->
+
+<div class="card-header">
+  <h2>Locator Overview</h2>
+</div>
+
+<!-- ===============================
+     ERROR
+================================ -->
+
+<div *ngIf="error" class="card error">
+  {{ error }}
+</div>
+
+<!-- ===============================
+     LOCATOR SELECT
+================================ -->
+
+<div class="card">
+
+  <div class="form-group">
+    <label>Select Locator</label>
+
+    <select
+      class="input"
+      (change)="selectLocator(+($any($event.target).value))"
+    >
+      <option value="">Select Locator</option>
+
+      <option
+        *ngFor="let l of locators"
+        [value]="l.locator_id"
+      >
+        {{ l.locator_code }}
+        <span *ngIf="l.owner_username">
+          ({{ l.owner_username }})
+        </span>
+      </option>
+
+    </select>
+  </div>
+
+</div>
+
+<!-- ===============================
+     LOADING
+================================ -->
+
+<div *ngIf="loadingDetails" class="card">
+  Loading locator data…
+</div>
+
+<!-- ===============================
+     DETAILS
+================================ -->
+
+<div *ngIf="details">
+
+  <!-- ===============================
+       LOCATOR INFO
+  ================================ -->
+
+  <div class="card">
+
+    <div class="card-header flex-between">
+      <h3>Locator Details</h3>
+    </div>
+
+    <div class="filters-row">
+
+      <div class="form-group inline">
+        <label>Locator Code</label>
+        <div>
+          <strong>{{ details.locator.locator_code }}</strong>
+        </div>
+      </div>
+
+      <div class="form-group inline">
+        <label>Status</label>
+        <div>
+          {{ details.locator.status }}
+        </div>
+      </div>
+
+      <div class="form-group inline">
+        <label>Owner</label>
+        <div>
+          {{ details.locator.owner_username || '—' }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ===============================
+       MATERIAL STOCK
+  ================================ -->
+
+  <div class="card" style="margin-top:20px">
+
+    <div class="card-header flex-between">
+      <h3>Material Stock</h3>
+
+      <span class="badge green">
+        {{ details.materials.length }} Items
+      </span>
+    </div>
+
+    <table class="table table--compact">
+
+      <thead>
+        <tr>
+          <th>ERP Code</th>
+          <th>Name</th>
+          <th>Remaining Stock</th>
+          <th>Allocated to Teams</th>
+          <th>Returned</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let m of details.materials">
+
+          <td><code>{{ m.erp_code }}</code></td>
+
+          <td>{{ m.material_name }}</td>
+
+          <!-- BASE STOCK -->
+          <td>{{ m.stock_assigned }}</td>
+
+          <!-- ALLOCATED -->
+          <td>{{ m.allocated }}</td>
+
+          <!-- RETURNED -->
+          <td>{{ m.returned }}</td>
+
+        </tr>
+
+        <tr *ngIf="details.materials.length === 0">
+          <td colspan="5" style="text-align:center">
+            No materials assigned to this locator
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <!-- ===============================
+       TEAM SELECT
+  ================================ -->
+
+  <div class="card" style="margin-top:20px">
+
+    <div class="form-group">
+      <label>Select Team</label>
+
+      <select
+        class="input"
+        (change)="selectTeam(+($any($event.target).value))"
+      >
+        <option value="">-- Choose Team --</option>
+
+        <option
+          *ngFor="let t of details.teams"
+          [value]="t.team_id"
+        >
+          {{ t.team_name }}
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <!-- ===============================
+       TEAM ALLOCATIONS
+  ================================ -->
+
+  <div
+    *ngIf="filteredTeamRows.length"
+    class="card"
+    style="margin-top:20px"
+  >
+
+    <div class="card-header flex-between">
+      <h3>Team Material Allocations</h3>
+
+      <span class="badge">
+        {{ filteredTeamRows.length }} Rows
+      </span>
+    </div>
+
+    <table class="table table--compact">
+
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Allocated</th>
+          <th>Returned</th>
+          <th>Used</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let r of filteredTeamRows">
+
+          <td><code>{{ r.material_code }}</code></td>
+
+          <td>{{ r.allocated_qty }}</td>
+
+          <td>{{ r.returned_qty }}</td>
+
+          <td>
+            <span
+              class="badge"
+              [class.green]="(r.allocated_qty - r.returned_qty) > 0"
+              [class.red]="(r.allocated_qty - r.returned_qty) === 0"
+            >
+              {{ r.allocated_qty - r.returned_qty }}
+            </span>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

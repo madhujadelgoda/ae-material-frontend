@@ -1,4 +1,3 @@
-
 <div class="card">
 
   <div class="card-header flex-between">
@@ -36,9 +35,7 @@
             min="0"
             [max]="a.allocated_quantity"
             [(ngModel)]="usedQty[a.allocation_id]"
-            [disabled]="
-              isLocked(a) || !canReturn
-            "
+            [disabled]="isLocked(a) || !canReturn"
           />
         </td>
 
@@ -50,9 +47,7 @@
             min="0"
             [max]="a.allocated_quantity"
             [(ngModel)]="damagedQty[a.allocation_id]"
-            [disabled]="
-              isLocked(a) || !canReturn
-            "
+            [disabled]="isLocked(a) || !canReturn"
           />
         </td>
 
@@ -60,13 +55,13 @@
         <td>
           <span
             class="badge"
-            [ngClass]="
-              isLocked(a) ? 'red' : 'green'
-            ">
+            [ngClass]="isLocked(a) ? 'red' : 'green'">
+
             {{ returnedQty(a) === null
                 ? '—'
                 : returnedQty(a)
             }}
+
           </span>
         </td>
 
@@ -80,8 +75,8 @@
             [disabled]="
               loading ||
               isLocked(a) ||
-              usedQty[a.allocation_id] === undefined ||
-              usedQty[a.allocation_id] <= 0
+              !canReturn ||
+              (usedQty[a.allocation_id] || 0) <= 0
             ">
 
             {{ isLocked(a)

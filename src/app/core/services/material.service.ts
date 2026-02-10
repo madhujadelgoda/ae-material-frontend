@@ -28,4 +28,14 @@ export class MaterialService {
   getAvailableMaterials() {
     return this.http.get<any[]>(`${this.baseUrl}/available`);
   }
+
+  // ==================================
+// Locator inventory summary
+// ==================================
+getLocatorInventory() {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/locator-inventory`
+  );
+}
+
 }

@@ -4,6 +4,10 @@ import { LoginComponent } from './pages/login/login';
 import { LayoutComponent } from './layout/layout';
 
 import { DashboardComponent } from './pages/dashboard/dashboard';
+
+import { LocatorOverviewComponent } from './pages/admin/locator-overview/locator-overview.component';
+
+
 import { LocatorComponent } from './pages/locator/locator';
 import { AssignMaterialComponent } from './pages/assign-material/assign-material';
 import { ReturnMaterialComponent } from './pages/return-material/return-material';
@@ -21,6 +25,10 @@ import { SecurityAuditComponent } from './pages/admin/audit/security-audit/secur
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { permissionGuard } from './core/guards/permission.guard';
+
+import { TeamAllocationsComponent } 
+  from './pages/locator/team-allocations/team-allocations';
+
 
 export const routes: Routes = [
 
@@ -51,11 +59,40 @@ export const routes: Routes = [
       },
 
       {
-        path: 'locator',
-        component: LocatorComponent,
-        canActivate: [permissionGuard('erp.locator.view')],
-        data: { title: 'My Locator', breadcrumb: 'My Locator' }
-      },
+  path: 'admin/locators',
+  component: LocatorOverviewComponent,
+  canActivate: [
+    roleGuard('ADMIN'),
+    permissionGuard('admin.locator.view')
+  ],
+  data: { title: 'Locator Overview' }
+},
+
+
+      {
+  path: 'locator',
+  component: LocatorComponent,
+  canActivate: [permissionGuard('erp.locator.view')],
+  data: { title: 'My Locator', breadcrumb: 'My Locator' },
+
+  children: [
+
+    // TEAM ALLOCATIONS TAB
+    {
+      path: 'team-allocations',
+      component: TeamAllocationsComponent,
+      canActivate: [
+        permissionGuard('material.view_team_allocations')
+      ],
+      data: {
+        title: 'Team Allocations',
+        breadcrumb: 'Team Allocations'
+      }
+    }
+
+  ]
+},
+
 
       // ======================
       // MATERIAL OPERATIONS

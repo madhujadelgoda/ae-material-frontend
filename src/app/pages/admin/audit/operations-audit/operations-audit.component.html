@@ -25,10 +25,10 @@
           <span
             class="badge"
             [class.green]="a.action === 'ALLOCATED'"
-            [class.orange]="a.action === 'USAGE_REPORTED'"
+            [class.orange]="a.action === 'USED' || a.action === 'DAMAGED'"
             [class.gray]="a.action === 'RETURNED'"
           >
-            {{ a.action }}
+            {{ a.action || 'UNKNOWN' }}
           </span>
         </td>
 
