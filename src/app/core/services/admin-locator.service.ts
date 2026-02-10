@@ -23,15 +23,17 @@ export interface AdminLocator {
 export interface LocatorMaterialStock {
 
   erp_code: string;
+
   material_name: string;
+  material_subcategory: string;
+  erp_description: string;
 
-  /* ERP baseline */
+  erp_uom: string;
+  measurement_code: string;
+
   stock_assigned: number;
-
-  /* Live stock */
   available_now: number;
 
-  /* Aggregates */
   allocated_to_teams: number;
   used_qty: number;
   damaged_qty: number;

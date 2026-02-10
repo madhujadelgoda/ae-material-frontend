@@ -19,17 +19,17 @@
       <tr>
         <th>ERP Code</th>
         <th>Name</th>
+        <th>Category</th>
+        <th>Description</th>
+
+        <!-- COMBINED -->
         <th>UOM</th>
 
-        <!-- NEW -->
         <th>Stock Assigned</th>
-
-        <th>Allocated to Teams</th>
+        <th>Allocated</th>
         <th>Used</th>
         <th>Damaged</th>
         <th>Returned</th>
-
-        <!-- UPDATED -->
         <th>Available Now</th>
       </tr>
     </thead>
@@ -38,17 +38,30 @@
 
       <tr *ngFor="let m of materials">
 
+        <!-- ERP -->
         <td>
           <code>{{ m.erp_code }}</code>
         </td>
 
         <td>{{ m.material_name }}</td>
 
-        <td>{{ m.erp_uom }}</td>
+        <td>{{ m.material_subcategory }}</td>
 
-        <!-- ORIGINAL ERP → LOCATOR -->
+        <td class="muted">
+          {{ m.erp_description }}
+        </td>
+
+        <!-- UOM + MEASURE -->
         <td>
-          {{ m.stock_assigned }}
+          {{ m.erp_uom }}
+          <small class="muted">
+            ({{ m.measurement_code }})
+          </small>
+        </td>
+
+        <!-- STOCK -->
+        <td>
+          <strong>{{ m.stock_assigned }}</strong>
         </td>
 
         <td>{{ m.allocated_to_teams }}</td>
@@ -59,7 +72,7 @@
 
         <td>{{ m.returned_qty }}</td>
 
-        <!-- LIVE AVAILABLE -->
+        <!-- LIVE -->
         <td>
           <span
             class="badge"
@@ -72,16 +85,23 @@
 
       </tr>
 
+      <!-- EMPTY -->
+      <tr *ngIf="!loading && materials.length === 0">
+        <td colspan="11" style="text-align:center">
+          No materials found in this locator.
+        </td>
+      </tr>
+
     </tbody>
 
   </table>
 
-  <!-- EMPTY -->
+  <!-- EMPTY OUTSIDE -->
   <div
     *ngIf="!loading && !materials.length"
     class="muted"
   >
     No materials found in this locator.
   </div>
-
+  
 </div>
