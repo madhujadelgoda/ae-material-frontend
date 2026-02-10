@@ -21,29 +21,41 @@ export interface AdminLocator {
 -------------------------------- */
 
 export interface LocatorMaterialStock {
+
   erp_code: string;
   material_name: string;
 
-  stock_assigned: number;   // baseline
+  /* ERP baseline */
+  stock_assigned: number;
 
-  allocated: number;
-  returned: number;
+  /* Live stock */
+  available_now: number;
+
+  /* Aggregates */
+  allocated_to_teams: number;
+  used_qty: number;
+  damaged_qty: number;
+  returned_qty: number;
 }
-
 
 /* -------------------------------
    TEAM MATERIAL ROW
 -------------------------------- */
 
 export interface TeamMaterialAllocation {
+
   team_id: number;
   team_name: string;
 
   material_code: string;
+  material_name?: string;
 
-  allocated_qty: number;
+  allocated_quantity: number;
+  used_quantity: number;
+  damaged_quantity: number;
+  returned_quantity: number;
 
-  returned_qty: number;
+  remaining_with_team: number;
 }
 
 /* -------------------------------
@@ -51,6 +63,7 @@ export interface TeamMaterialAllocation {
 -------------------------------- */
 
 export interface LocatorDetails {
+
   locator: AdminLocator;
 
   materials: LocatorMaterialStock[];
@@ -75,9 +88,17 @@ export class AdminLocatorService {
 
   constructor(private http: HttpClient) {}
 
+  /* ---------------------------
+     LIST LOCATORS
+  ---------------------------- */
+
   getLocators(): Observable<AdminLocator[]> {
     return this.http.get<AdminLocator[]>(this.base);
   }
+
+  /* ---------------------------
+     FULL LOCATOR DETAILS
+  ---------------------------- */
 
   getLocatorDetails(locatorId: number): Observable<LocatorDetails> {
     return this.http.get<LocatorDetails>(

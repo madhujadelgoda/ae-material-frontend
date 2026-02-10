@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
   AdminLocatorService,
   AdminLocator,
-  LocatorDetails,
-  TeamMaterialAllocation
+  LocatorDetails
 } from '../../../core/services/admin-locator.service';
 
 @Component({
@@ -22,7 +21,7 @@ export class LocatorOverviewComponent implements OnInit {
   details: LocatorDetails | null = null;
 
   selectedTeamId: number | null = null;
-  filteredTeamRows: TeamMaterialAllocation[] = [];
+  filteredTeamRows: any[] = [];
 
   loadingLocators = false;
   loadingDetails = false;
@@ -61,10 +60,12 @@ export class LocatorOverviewComponent implements OnInit {
   ================================ */
 
   selectLocator(locatorId: number) {
+
     this.selectedLocatorId = locatorId;
+
     this.details = null;
-    this.selectedTeamId = null;
     this.filteredTeamRows = [];
+    this.selectedTeamId = null;
 
     this.loadDetails();
   }
@@ -74,6 +75,7 @@ export class LocatorOverviewComponent implements OnInit {
   ================================ */
 
   loadDetails() {
+
     if (!this.selectedLocatorId) return;
 
     this.loadingDetails = true;
@@ -97,6 +99,7 @@ export class LocatorOverviewComponent implements OnInit {
   ================================ */
 
   selectTeam(teamId: number) {
+
     this.selectedTeamId = teamId;
 
     this.filteredTeamRows =

@@ -3,7 +3,7 @@
 ================================ -->
 
 <div class="card-header">
-  <h2>Locator Overview</h2>
+  <h2>Locator Overview (Admin)</h2>
 </div>
 
 <!-- ===============================
@@ -79,16 +79,12 @@
 
       <div class="form-group inline">
         <label>Status</label>
-        <div>
-          {{ details.locator.status }}
-        </div>
+        <div>{{ details.locator.status }}</div>
       </div>
 
       <div class="form-group inline">
         <label>Owner</label>
-        <div>
-          {{ details.locator.owner_username || '—' }}
-        </div>
+        <div>{{ details.locator.owner_username || '—' }}</div>
       </div>
 
     </div>
@@ -102,7 +98,7 @@
   <div class="card" style="margin-top:20px">
 
     <div class="card-header flex-between">
-      <h3>Material Stock</h3>
+      <h3>Locator Inventory</h3>
 
       <span class="badge green">
         {{ details.materials.length }} Items
@@ -115,9 +111,13 @@
         <tr>
           <th>ERP Code</th>
           <th>Name</th>
-          <th>Remaining Stock</th>
+
+          <th>Stock Assigned</th>
           <th>Allocated to Teams</th>
+          <th>Used</th>
+          <th>Damaged</th>
           <th>Returned</th>
+          <th>Available Now</th>
         </tr>
       </thead>
 
@@ -126,22 +126,32 @@
         <tr *ngFor="let m of details.materials">
 
           <td><code>{{ m.erp_code }}</code></td>
-
           <td>{{ m.material_name }}</td>
 
-          <!-- BASE STOCK -->
           <td>{{ m.stock_assigned }}</td>
 
-          <!-- ALLOCATED -->
-          <td>{{ m.allocated }}</td>
+          <td>{{ m.allocated_to_teams }}</td>
 
-          <!-- RETURNED -->
-          <td>{{ m.returned }}</td>
+          <td>{{ m.used_qty }}</td>
+
+          <td>{{ m.damaged_qty }}</td>
+
+          <td>{{ m.returned_qty }}</td>
+
+          <td>
+            <span
+              class="badge"
+              [class.green]="m.available_now > 0"
+              [class.red]="m.available_now === 0"
+            >
+              {{ m.available_now }}
+            </span>
+          </td>
 
         </tr>
 
         <tr *ngIf="details.materials.length === 0">
-          <td colspan="5" style="text-align:center">
+          <td colspan="8" style="text-align:center">
             No materials assigned to this locator
           </td>
         </tr>
@@ -191,7 +201,7 @@
   >
 
     <div class="card-header flex-between">
-      <h3>Team Material Allocations</h3>
+      <h3>Team Allocations</h3>
 
       <span class="badge">
         {{ filteredTeamRows.length }} Rows
@@ -204,8 +214,9 @@
         <tr>
           <th>Material</th>
           <th>Allocated</th>
-          <th>Returned</th>
           <th>Used</th>
+          <th>Returned</th>
+          <th>With Team</th>
         </tr>
       </thead>
 
@@ -215,17 +226,19 @@
 
           <td><code>{{ r.material_code }}</code></td>
 
-          <td>{{ r.allocated_qty }}</td>
+          <td>{{ r.allocated_quantity }}</td>
 
-          <td>{{ r.returned_qty }}</td>
+          <td>{{ r.used_quantity }}</td>
+
+          <td>{{ r.returned_quantity }}</td>
 
           <td>
             <span
               class="badge"
-              [class.green]="(r.allocated_qty - r.returned_qty) > 0"
-              [class.red]="(r.allocated_qty - r.returned_qty) === 0"
+              [class.green]="r.remaining_with_team > 0"
+              [class.red]="r.remaining_with_team === 0"
             >
-              {{ r.allocated_qty - r.returned_qty }}
+              {{ r.remaining_with_team }}
             </span>
           </td>
 

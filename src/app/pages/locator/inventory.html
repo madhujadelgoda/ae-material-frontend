@@ -4,10 +4,12 @@
     <h3>Locator Inventory</h3>
   </div>
 
+  <!-- LOADING -->
   <div *ngIf="loading" class="muted">
     Loading inventory...
   </div>
 
+  <!-- TABLE -->
   <table
     *ngIf="!loading && materials.length"
     class="table table--compact"
@@ -19,11 +21,15 @@
         <th>Name</th>
         <th>UOM</th>
 
+        <!-- NEW -->
+        <th>Stock Assigned</th>
+
         <th>Allocated to Teams</th>
         <th>Used</th>
         <th>Damaged</th>
         <th>Returned</th>
 
+        <!-- UPDATED -->
         <th>Available Now</th>
       </tr>
     </thead>
@@ -32,11 +38,18 @@
 
       <tr *ngFor="let m of materials">
 
-        <td><code>{{ m.erp_code }}</code></td>
+        <td>
+          <code>{{ m.erp_code }}</code>
+        </td>
 
         <td>{{ m.material_name }}</td>
 
         <td>{{ m.erp_uom }}</td>
+
+        <!-- ORIGINAL ERP → LOCATOR -->
+        <td>
+          {{ m.stock_assigned }}
+        </td>
 
         <td>{{ m.allocated_to_teams }}</td>
 
@@ -46,6 +59,7 @@
 
         <td>{{ m.returned_qty }}</td>
 
+        <!-- LIVE AVAILABLE -->
         <td>
           <span
             class="badge"
@@ -62,6 +76,7 @@
 
   </table>
 
+  <!-- EMPTY -->
   <div
     *ngIf="!loading && !materials.length"
     class="muted"
