@@ -6,6 +6,12 @@ import { RouterModule } from '@angular/router';
 import { AdminPermissionService } from '../../../core/services/admin-permission.service';
 import { HasPermissionDirective } from '../../../core/directives/has-permission.directive';
 
+interface PermissionRow {
+  permission_id: number;
+  permission_key: string;
+  description: string | null;
+}
+
 @Component({
   selector: 'app-permissions',
   standalone: true,
@@ -13,52 +19,77 @@ import { HasPermissionDirective } from '../../../core/directives/has-permission.
     CommonModule,
     FormsModule,
     RouterModule,
-    HasPermissionDirective 
+    HasPermissionDirective
   ],
   templateUrl: './permissions.component.html'
 })
 export class PermissionsComponent implements OnInit {
 
-  permissions: any[] = [];
+  permissions: PermissionRow[] = [];
 
   // create / edit
   key = '';
   desc = '';
-  editing: any = null;
+
+  editing: PermissionRow | null = null;
 
   loading = false;
   error = '';
 
-  constructor(private permService: AdminPermissionService) {}
+  constructor(
+    private permService: AdminPermissionService
+  ) {}
 
   ngOnInit(): void {
     this.load();
   }
 
+  /* ===========================
+     LOAD
+  ============================ */
+
   load(): void {
+
+    this.loading = true;
+
     this.permService.getPermissions().subscribe({
       next: data => {
         this.permissions = data;
+        this.loading = false;
       },
       error: () => {
         this.error = 'Failed to load permissions';
+        this.loading = false;
       }
     });
   }
 
+  /* ===========================
+     CREATE
+  ============================ */
+
   create(): void {
+
     if (!this.key.trim()) return;
 
-    this.permService.createPermission(this.key, this.desc).subscribe(() => {
-      this.key = '';
-      this.desc = '';
-      this.load();
-    });
+    this.permService
+      .createPermission(this.key, this.desc)
+      .subscribe(() => {
+
+        this.key = '';
+        this.desc = '';
+
+        this.load();
+      });
   }
 
-  startEdit(p: any): void {
+  /* ===========================
+     EDIT
+  ============================ */
+
+  startEdit(p: PermissionRow): void {
     this.editing = p;
-    this.desc = p.description;
+    this.desc = p.description || '';
   }
 
   cancelEdit(): void {
@@ -67,15 +98,28 @@ export class PermissionsComponent implements OnInit {
   }
 
   saveEdit(): void {
+
+    if (!this.editing) return;
+
     this.permService
-      .updatePermission(this.editing.permission_id, this.desc)
+      .updatePermission(
+        this.editing.permission_id,
+        this.desc
+      )
       .subscribe(() => {
+
         this.cancelEdit();
         this.load();
+
       });
   }
 
-  delete(p: any): void {
+  /* ===========================
+     DELETE
+  ============================ */
+
+  delete(p: PermissionRow): void {
+
     if (!confirm(`Delete permission ${p.permission_key}?`)) return;
 
     this.permService
