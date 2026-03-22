@@ -302,6 +302,35 @@
   gap: 16px;
 }
 
+/* Stat card icon accent badge */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.card-stat-icon .material-symbols-rounded {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+.card-stat-icon.blue   { background: #eff6ff; color: #2563eb; }
+.card-stat-icon.purple { background: #f5f3ff; color: #7c3aed; }
+.card-stat-icon.indigo { background: #eef2ff; color: #4338ca; }
+.card-stat-icon.green  { background: #f0fdf4; color: #16a34a; }
+.card-stat-icon.orange { background: #fff7ed; color: #ea580c; }
+.card-stat-icon.teal   { background: #f0fdfa; color: #0d9488; }
+
 .card {
   background: white;
   padding: 20px;

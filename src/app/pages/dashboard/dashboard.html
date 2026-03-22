@@ -11,32 +11,38 @@
 <!-- Dashboard -->
 <div *ngIf="!loading && !error" class="dashboard-grid">
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon blue"><span class="material-symbols-rounded">inventory_2</span></div>
     <h4>Total Materials</h4>
     <p>{{ summary.totalMaterials }}</p>
   </div>
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon purple"><span class="material-symbols-rounded">groups</span></div>
     <h4>Total Teams</h4>
     <p>{{ summary.totalTeams }}</p>
   </div>
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon indigo"><span class="material-symbols-rounded">receipt_long</span></div>
     <h4>Total Allocations</h4>
     <p>{{ summary.totalAllocations }}</p>
   </div>
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon green"><span class="material-symbols-rounded">task_alt</span></div>
     <h4>Active Allocations</h4>
     <p>{{ summary.activeAllocations }}</p>
   </div>
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon orange"><span class="material-symbols-rounded">assignment_return</span></div>
     <h4>Returned Today</h4>
     <p>{{ summary.returnedToday }}</p>
   </div>
 
-  <div class="card">
+  <div class="card stat-card">
+    <div class="card-stat-icon teal"><span class="material-symbols-rounded">calendar_today</span></div>
     <h4>Allocated Today</h4>
     <p>{{ summary.todayAllocations }}</p>
   </div>
