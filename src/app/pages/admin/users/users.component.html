@@ -1,34 +1,35 @@
 <div class="card">
 
-  <!-- =========================
-       HEADER
-  ========================== -->
-  <div class="card-header flex-between">
-    <h3>Users</h3>
+  <!-- HEADER -->
+  <div class="card-header flex-between" style="margin-bottom: 14px;">
+    <div class="page-title">
+      <span class="material-symbols-rounded page-title-icon">group</span>
+      <div>
+        <h3 style="margin: 0; font-size: 15px;">Users</h3>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Manage system users and their roles</p>
+      </div>
+    </div>
 
-    <!-- Create User -->
     <button
       class="btn primary"
       (click)="openCreate()"
       *hasPermission="'user.create'"
     >
-      + New User
+      <span class="material-symbols-rounded btn-icon">person_add</span>
+      New User
     </button>
   </div>
 
-  <!-- =========================
-       USERS TABLE
-  ========================== -->
-
-  <table class="table">
+  <!-- USERS TABLE -->
+  <table class="table table--compact">
 
     <thead>
       <tr>
-        <th>Username</th>
-        <th>Full Name</th>
+        <th style="width: 18%">Username</th>
+        <th style="width: 20%">Full Name</th>
         <th>Roles</th>
-        <th>Status</th>
-        <th width="260">Actions</th>
+        <th style="width: 110px">Status</th>
+        <th style="width: 160px">Actions</th>
       </tr>
     </thead>
 
@@ -37,16 +38,22 @@
       <tr *ngFor="let u of users">
 
         <!-- Username -->
-        <td>{{ u.username }}</td>
+        <td>
+          <div style="display:flex; align-items:center; gap: 8px;">
+            <div class="user-avatar-sm">{{ (u.username || '?').charAt(0).toUpperCase() }}</div>
+            <strong style="font-size: 13px;">{{ u.username }}</strong>
+          </div>
+        </td>
 
         <!-- Full Name -->
-        <td>{{ u.full_name || '—' }}</td>
+        <td style="color: #374151; font-size: 13px;">{{ u.full_name || '—' }}</td>
 
         <!-- Roles -->
         <td>
           <ng-container *ngIf="u.roles?.length; else noRoles">
             <span
-              class="badge"
+              class="badge gray"
+              style="margin-right: 4px; margin-bottom: 2px;"
               *ngFor="let r of u.roles"
             >
               {{ r }}
@@ -54,7 +61,7 @@
           </ng-container>
 
           <ng-template #noRoles>
-            <span class="muted">—</span>
+            <span style="color: #9ca3af; font-size: 12px;">—</span>
           </ng-template>
         </td>
 
@@ -69,48 +76,57 @@
           </span>
         </td>
 
-        <!-- =========================
-             ACTIONS
-        ========================== -->
-
+        <!-- ACTIONS -->
         <td>
+          <div class="btn-group">
 
-          <!-- Edit -->
-          <button
-            class="btn small"
-            (click)="openEdit(u)"
-            *hasPermission="'user.update'"
-          >
-            Edit
-          </button>
+            <button
+              class="btn icon-btn"
+              (click)="openEdit(u)"
+              *hasPermission="'user.update'"
+              title="Edit user"
+            >
+              <span class="material-symbols-rounded">edit</span>
+            </button>
 
-          <!-- Reset Password (NO permission gate) -->
-          <button
-            class="btn small"
-            (click)="openReset(u)"
-          >
-            Reset
-          </button>
+            <button
+              class="btn icon-btn"
+              (click)="openReset(u)"
+              title="Reset password"
+              style="color: #d97706; border-color: #fde68a; background: #fffbeb;"
+            >
+              <span class="material-symbols-rounded">lock_reset</span>
+            </button>
 
-          <!-- Enable / Disable (NO permission gate) -->
-          <button
-            class="btn warn small"
-            (click)="toggleStatus(u)"
-          >
-            {{ u.status === 'ACTIVE' ? 'Disable' : 'Enable' }}
-          </button>
+            <button
+              class="btn small"
+              [class.ghost]="u.status === 'ACTIVE'"
+              [class.primary]="u.status !== 'ACTIVE'"
+              (click)="toggleStatus(u)"
+              [title]="u.status === 'ACTIVE' ? 'Disable user' : 'Enable user'"
+              style="font-size: 11px; padding: 5px 10px;"
+            >
+              {{ u.status === 'ACTIVE' ? 'Disable' : 'Enable' }}
+            </button>
 
-          <!-- Delete -->
-          <button
-            class="btn danger small"
-            (click)="deleteUser(u)"
-            *hasPermission="'user.delete'"
-          >
-            Delete
-          </button>
+            <button
+              class="btn icon-btn danger"
+              (click)="deleteUser(u)"
+              *hasPermission="'user.delete'"
+              title="Delete user"
+            >
+              <span class="material-symbols-rounded">delete</span>
+            </button>
 
+          </div>
         </td>
 
+      </tr>
+
+      <tr *ngIf="users.length === 0">
+        <td colspan="5" style="text-align: center; color: #9ca3af; padding: 28px;">
+          No users found
+        </td>
       </tr>
 
     </tbody>
