@@ -164,24 +164,56 @@
   margin-top: 18px;
 }
 
-/* Buttons */
+/* ===========================
+   BUTTONS
+=========================== */
 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 8px 16px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
   border: none;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 0.16s ease, color 0.16s ease,
+              box-shadow 0.16s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn.primary {
-  background:  #2563eb;
-  color: white;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
+}
+
+.btn.primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.32);
+}
+
+.btn.primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .btn.ghost {
-  background: transparent;
+  background: #ffffff;
   border: 1px solid #d1d5db;
   color: #374151;
+}
+
+.btn.ghost:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
 }
 
 /* Animation */
@@ -257,31 +289,17 @@
   gap: 10px;
 }
 
-/* Buttons */
-.btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-}
-
-.btn:hover {
-  opacity: 0.95;
-}
-
-/* Cancel */
-.btn {
-  background: transparent;
-  border: 1px solid #d1d5db;
-  color: #374151;
-}
-
-/* Danger / reset */
+/* Danger */
 .btn.danger {
-  background: #d61111;
-  color: white;
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.18);
   border: none;
+}
+
+.btn.danger:hover {
+  background: #b91c1c;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.28);
 }
 
 /* Animation */
@@ -396,11 +414,10 @@
   color: #374151;
 }
 
-/* Action buttons */
+/* Small variant */
 .btn.small {
-  padding: 6px 10px;
+  padding: 6px 12px;
   font-size: 12px;
-  margin-right: 6px;
 }
 
 .btn.warn {
@@ -410,6 +427,72 @@
 
 .btn.warn:hover {
   background: rgb(41, 40, 40);
+}
+
+/* Icon-only square button */
+.btn.icon-btn {
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #6b7280;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.btn.icon-btn:hover {
+  background: #eef4ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+.btn.icon-btn.danger {
+  background: #fff5f5;
+  border-color: #fecaca;
+  color: #dc2626;
+  box-shadow: none;
+}
+
+.btn.icon-btn.danger:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+  color: #b91c1c;
+  box-shadow: none;
+}
+
+.btn.icon-btn .material-symbols-rounded {
+  font-size: 15px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
+/* Icon inside a text button */
+.btn-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+/* Button group */
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Page section heading with icon */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-title-icon {
+  font-size: 20px;
+  color: #2563eb;
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
 }
 
 /* Align action buttons nicely */

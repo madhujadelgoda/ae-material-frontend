@@ -6,26 +6,34 @@
 
   <div class="card">
 
-    <div class="card-header">
-      <h3>Roles Management</h3>
+    <div class="card-header flex-between" style="margin-bottom: 18px;">
+      <div class="page-title">
+        <span class="material-symbols-rounded page-title-icon">shield</span>
+        <div>
+          <h3 style="margin: 0; font-size: 15px;">Roles Management</h3>
+          <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Create and manage system roles</p>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Role Name</label>
-      <input
-        type="text"
-        placeholder="e.g. ADMIN"
-        [(ngModel)]="roleName"
-      />
-    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Role Name</label>
+        <input
+          type="text"
+          placeholder="e.g. ADMIN"
+          [(ngModel)]="roleName"
+        />
+      </div>
 
-    <div class="form-group">
-      <label>Description</label>
-      <input
-        type="text"
-        placeholder="Short description"
-        [(ngModel)]="description"
-      />
+      <div class="form-group">
+        <label>Description</label>
+        <input
+          type="text"
+          placeholder="Short description"
+          [(ngModel)]="description"
+        />
+      </div>
     </div>
 
     <button
@@ -33,6 +41,7 @@
       (click)="createRole()"
       [disabled]="loading"
     >
+      <span class="material-symbols-rounded btn-icon">add_circle</span>
       {{ loading ? 'Creating…' : 'Create Role' }}
     </button>
 
@@ -46,10 +55,13 @@
      EXISTING ROLES
 ========================= -->
 
-<div class="card" style="margin-top: 20px;">
+<div class="card" style="margin-top: 16px;">
 
-  <div class="card-header flex-between">
-    <h3>Existing Roles</h3>
+  <div class="card-header flex-between" style="margin-bottom: 14px;">
+    <div class="page-title">
+      <span class="material-symbols-rounded page-title-icon">manage_accounts</span>
+      <h3 style="margin: 0; font-size: 15px;">Existing Roles</h3>
+    </div>
     <span class="badge green">{{ roles.length }} Total</span>
   </div>
 
@@ -60,7 +72,7 @@
         <th style="width: 20%">Role</th>
         <th>Description</th>
         <th style="width: 15%">Users</th>
-        <th style="width: 180px">Actions</th>
+        <th style="width: 150px">Actions</th>
       </tr>
     </thead>
 
@@ -84,6 +96,7 @@
           <!-- edit (permission gated) -->
           <ng-container *ngIf="editingRole?.role_id === r.role_id">
             <input
+              class="inline-edit-input"
               *hasPermission="'role.update'"
               [(ngModel)]="editDescription"
             />
@@ -93,54 +106,55 @@
 
         <!-- USER COUNT -->
         <td>
-          <span class="badge">{{ r.user_count }}</span>
+          <span class="badge gray">{{ r.user_count }}</span>
         </td>
 
-        <!-- =========================
-             ACTIONS
-        ========================== -->
-
+        <!-- ACTIONS -->
         <td>
 
           <!-- VIEW MODE -->
           <ng-container *ngIf="editingRole?.role_id !== r.role_id">
+            <div class="btn-group">
+              <button
+                class="btn icon-btn"
+                (click)="startEdit(r)"
+                *hasPermission="'role.update'"
+                title="Edit role"
+              >
+                <span class="material-symbols-rounded">edit</span>
+              </button>
 
-            <button
-              class="btn small"
-              (click)="startEdit(r)"
-              *hasPermission="'role.update'"
-            >
-              Edit
-            </button>
-
-            <button
-              class="btn danger small"
-              (click)="deleteRole(r)"
-              *hasPermission="'role.delete'"
-            >
-              Delete
-            </button>
-
+              <button
+                class="btn icon-btn danger"
+                (click)="deleteRole(r)"
+                *hasPermission="'role.delete'"
+                title="Delete role"
+              >
+                <span class="material-symbols-rounded">delete</span>
+              </button>
+            </div>
           </ng-container>
 
           <!-- EDIT MODE -->
           <ng-container *ngIf="editingRole?.role_id === r.role_id">
+            <div class="btn-group">
+              <button
+                class="btn small primary"
+                (click)="saveEdit()"
+                *hasPermission="'role.update'"
+              >
+                <span class="material-symbols-rounded btn-icon">check</span>
+                Save
+              </button>
 
-            <button
-              class="btn small primary"
-              (click)="saveEdit()"
-              *hasPermission="'role.update'"
-            >
-              Save
-            </button>
-
-            <button
-              class="btn small ghost"
-              (click)="cancelEdit()"
-            >
-              Cancel
-            </button>
-
+              <button
+                class="btn small ghost"
+                (click)="cancelEdit()"
+              >
+                <span class="material-symbols-rounded btn-icon">close</span>
+                Cancel
+              </button>
+            </div>
           </ng-container>
 
         </td>
