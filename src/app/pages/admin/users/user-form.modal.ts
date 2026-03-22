@@ -12,16 +12,14 @@ import { AdminUserService } from '../../../core/services/admin-user.service';
     <div class="modal-backdrop">
       <div class="modal-card">
 
-        <h3 class="modal-title">
-          {{ user ? 'Edit User' : 'Create User' }}
-        </h3>
+        <h3>{{ user ? 'Edit User' : 'Create User' }}</h3>
 
         <div class="form-group">
           <label>Username</label>
           <input
             type="text"
             [(ngModel)]="form.username"
-            placeholder="Enter username"
+            [disabled]="!!user"
           />
         </div>
 
@@ -30,7 +28,6 @@ import { AdminUserService } from '../../../core/services/admin-user.service';
           <input
             type="text"
             [(ngModel)]="form.full_name"
-            placeholder="Enter full name"
           />
         </div>
 
@@ -39,17 +36,15 @@ import { AdminUserService } from '../../../core/services/admin-user.service';
           <input
             type="password"
             [(ngModel)]="form.password"
-            placeholder="Set password"
           />
         </div>
 
         <div class="form-group">
           <label>Roles</label>
-          <select multiple [(ngModel)]="form.roles">
-            <option value="ADMIN">ADMIN</option>
-            <option value="AE">AE</option>
+          <select multiple [(ngModel)]="form.role_ids">
+            <option [value]="1">ADMIN</option>
+            <option [value]="2">AE</option>
           </select>
-          <small class="hint">Hold Ctrl / Cmd to select multiple</small>
         </div>
 
         <div class="modal-actions">
@@ -71,7 +66,7 @@ export class UserFormModalComponent {
     username: '',
     full_name: '',
     password: '',
-    roles: []
+    role_ids: []
   };
 
   constructor(private service: AdminUserService) {}
@@ -80,7 +75,7 @@ export class UserFormModalComponent {
     if (this.user) {
       this.form.username = this.user.username;
       this.form.full_name = this.user.full_name;
-      this.form.roles = this.user.roles?.split(',') || [];
+      this.form.role_ids = this.user.role_ids || [];
     }
   }
 
@@ -88,18 +83,14 @@ export class UserFormModalComponent {
     if (this.user) {
       this.service
         .updateUser(this.user.user_id, {
-          username: this.form.username,
-          full_name: this.form.full_name
+          full_name: this.form.full_name,
+          role_ids: this.form.role_ids
         })
-        .subscribe(() => {
-          this.service
-            .updateRoles(this.user.user_id, this.form.roles)
-            .subscribe(() => this.saved.emit());
-        });
+        .subscribe(() => this.saved.emit());
     } else {
-      this.service.createUser(this.form).subscribe(() => {
-        this.saved.emit();
-      });
+      this.service
+        .createUser(this.form)
+        .subscribe(() => this.saved.emit());
     }
   }
 }

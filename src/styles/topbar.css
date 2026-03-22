@@ -1,0 +1,39 @@
+/* Top audit navigation */
+.top-links {
+  display: flex;
+  gap: 16px;
+}
+
+/* Base link style */
+.audit-link {
+  position: relative;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  color: #6b7280; 
+  padding: 6px 2px;
+  transition: color 0.2s ease;
+}
+
+/* Hover */
+.audit-link:hover {
+  color: #111827; 
+}
+
+/* Active route */
+.audit-link.active {
+  color: #2563eb; 
+  font-weight: 600;
+}
+
+/* Active underline (professional look) */
+.audit-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 2px;
+  background-color: #2563eb;
+  border-radius: 2px;
+}

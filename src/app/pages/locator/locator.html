@@ -1,59 +1,68 @@
+<!-- ============================
+     LOCATOR MAIN CARD
+============================ -->
+
 <div class="card">
 
-  <!-- Header -->
+  <!-- HEADER -->
   <div class="card-header flex-between">
+
     <h3>Assigned Locator</h3>
+
+    <!-- TOPBAR LINKS -->
+    <div class="top-links">
+
+      <!-- Inventory tab -->
+      <a
+        routerLink="./"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="tab-link"
+      >
+        My Locator
+      </a>
+
+      <!-- Team allocations tab -->
+      <a
+        routerLink="team-allocations"
+        routerLinkActive="active"
+        class="tab-link"
+        *hasPermission="'material.view_team_allocations'"
+      >
+        Team Allocations
+      </a>
+
+    </div>
+
   </div>
 
-  <!-- Locator Info -->
+  <!-- ASSIGNED LOCATOR DETAILS -->
   <div *ngIf="locator" class="filters-row">
-    <div class="form-group inline">
-      <label>ID</label>
-      <div>{{ locator.locator_id }}</div>
-    </div>
 
     <div class="form-group inline">
-      <label>Name</label>
-      <div>{{ locator.locator_name }}</div>
+      <label>Locator Code</label>
+      <div>
+        <strong>{{ locator.locator_code }}</strong>
+      </div>
+
     </div>
+
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="!locator && !error" class="muted">
+    Loading locator...
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error" class="error">
+    {{ error }}
   </div>
 
 </div>
 
-<div class="card" style="margin-top: 16px;">
+<!-- ============================
+     CHILD ROUTES RENDER HERE
+============================ -->
 
-  <!-- Header -->
-  <div class="card-header flex-between">
-    <h3>Materials Available in Locator</h3>
-  </div>
-
-  <!-- Table -->
-  <table class="table table--compact">
-    <thead>
-      <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>UOM</th>
-        <th>Total</th>
-        <th>Allocated</th>
-        <th>Available</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let m of materials">
-        <td>{{ m.material_code }}</td>
-        <td>{{ m.material_name }}</td>
-        <td>{{ m.uom }}</td>
-        <td>{{ m.total_quantity }}</td>
-        <td>{{ m.allocated_quantity }}</td>
-        <td>
-          <span class="badge green">
-            {{ m.remaining_quantity }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-</div>
+<router-outlet></router-outlet>

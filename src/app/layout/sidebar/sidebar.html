@@ -1,6 +1,6 @@
 <nav class="sidebar">
 
-  <!-- Brand -->
+  <!-- BRAND -->
   <div class="sidebar-header">
     <span class="brand-dot"></span>
     <span class="brand-title">AE Material</span>
@@ -20,6 +20,16 @@
     </a>
 
     <a
+      *hasPermission="'admin.locator.view'"
+      routerLink="/admin/locators"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      Locator Overview
+    </a>
+
+    <a
+      *hasPermission="'erp.locator.view'"
       routerLink="/locator"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
@@ -28,15 +38,8 @@
       My Locator
     </a>
 
-    <!-- <a routerLink="/materials" routerLinkActive="active" class="sidebar-link">
-      Materials
-    </a>
-
-    <a routerLink="/teams" routerLinkActive="active" class="sidebar-link">
-      Teams
-    </a> -->
-
     <a
+      *hasPermission="'material.allocate'"
       routerLink="/assign"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
@@ -46,6 +49,7 @@
     </a>
 
     <a
+      *hasPermission="'material.return'"
       routerLink="/return"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
@@ -55,6 +59,7 @@
     </a>
 
     <a
+      *hasPermission="'material.allocate.bulk'"
       routerLink="/bulk-allocate"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
@@ -64,11 +69,12 @@
     </a>
   </div>
 
-  <!-- ADMIN SECTION -->
-  <div class="sidebar-section" *ngIf="isAdmin">
+  <!-- ADMIN -->
+  <div class="sidebar-section" *ngIf="isAdmin()">
     <p class="sidebar-section-title">ADMIN</p>
 
     <a
+      *hasPermission="'user.view'"
       routerLink="/admin/users"
       routerLinkActive="active"
       class="sidebar-link"
@@ -77,6 +83,7 @@
     </a>
 
     <a
+      *hasPermission="'role.view'"
       routerLink="/admin/roles"
       routerLinkActive="active"
       class="sidebar-link"
@@ -85,11 +92,35 @@
     </a>
 
     <a
+      *hasPermission="'permission.view'"
       routerLink="/admin/permissions"
       routerLinkActive="active"
       class="sidebar-link"
     >
       Permissions
+    </a>
+
+    <a
+      *hasPermission="'role.permission.assign'"
+      routerLink="/admin/role-permissions"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      Role Permissions
+    </a>
+  </div>
+
+  <!-- AUDIT -->
+  <div class="sidebar-section" *ngIf="isAdmin()">
+    <p class="sidebar-section-title">AUDIT</p>
+
+    <a
+      *hasPermission="'audit.operations.view'"
+      routerLink="/admin/audit"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      Audit Logs
     </a>
   </div>
 
@@ -102,7 +133,12 @@
 
       <div>
         <div class="user-name">{{ username }}</div>
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <button
+          class="logout-btn"
+          (click)="confirmLogout()"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </div>

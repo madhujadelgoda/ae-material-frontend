@@ -3,6 +3,8 @@
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   border: 1px solid var(--border-light);
+  box-shadow: 0 4px 6px rgba(17, 24, 39, 0.06), 
+  0 12px 32px rgba(17, 24, 39, 0.12);
 }
 
 .card-header {
@@ -20,18 +22,20 @@
 /* Header */
 .table th {
   text-align: left;
-  padding: 8px 10px;          /* ↓ reduced */
+  padding: 8px 10px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #e6e6e6;
-  border-bottom: 1px solid var(--border-light);
+
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  background: #1f6fb2;
+
   line-height: 1.2;
-  background: #146e8a;
 }
 
 /* Body cells */
 .table td {
-  padding: 10px 12px;          /* ↓ reduced */
+  padding: 10px 12px;         
   font-size: 0.85rem;
   border-bottom: 1px solid var(--border-light);
   line-height: 1.25;
@@ -159,7 +163,6 @@
     transform: scale(1);
   }
 }
-
 
 
 /* reset password model */
@@ -294,23 +297,42 @@
   align-items: center;
 }
 
-/* Status badges */
+/* ===========================
+   STATUS BADGES
+=========================== */
+
 .badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 4px 12px;
   font-size: 12px;
   border-radius: 999px;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
 
+/* ALLOCATED / OK */
 .badge.green {
   background: #dcfce7;
   color: #166534;
 }
 
+/* ZERO / CRITICAL */
 .badge.red {
   background: #fee2e2;
   color: #991b1b;
+}
+
+/* USED / DAMAGED */
+.badge.orange {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+/* RETURNED / CLOSED */
+.badge.gray {
+  background: #f3f4f6;
+  color: #374151;
 }
 
 /* Action buttons */
@@ -394,4 +416,187 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
+}
+
+/* NG-SELECT custom styling */
+ng-select {
+  width: 100%;
+  font-size: 13px;
+}
+
+/* Main control */
+.ng-select .ng-select-container {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  min-height: 36px;
+  padding: 2px 6px;
+  box-shadow: none;
+}
+
+/* Hover */
+.ng-select.ng-select-focused .ng-select-container {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+}
+
+/* Placeholder */
+.ng-select .ng-placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* Selected value */
+.ng-select .ng-value {
+  font-size: 13px;
+  color: #111827;
+}
+
+/* Dropdown panel */
+.ng-dropdown-panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  z-index: 2000 !important; /* VERY IMPORTANT */
+}
+
+/* Options */
+.ng-dropdown-panel .ng-option {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #111827;
+}
+
+/* Hover option */
+.ng-dropdown-panel .ng-option:hover {
+  background: #f3f4f6;
+}
+
+/* Selected option */
+.ng-dropdown-panel .ng-option-selected {
+  background: #e0e7ff;
+  color: #1e3a8a;
+}
+
+/* Disabled option */
+.ng-dropdown-panel .ng-option-disabled {
+  color: #9ca3af;
+}
+
+/* Clear (×) icon */
+.ng-select .ng-clear-wrapper {
+  color: #6b7280;
+}
+
+/* Arrow */
+.ng-select .ng-arrow-wrapper {
+  color: #6b7280;
+}
+
+/* Wide dropdown fields */
+.form-group.inline.wide {
+  min-width: 320px;
+  flex: 1 1 320px;
+}
+
+/* Ensure ng-select stretches fully */
+.form-group.inline.wide ng-select {
+  width: 100%;
+}
+
+/* Role permissions UI */
+.permission-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-white);
+}
+
+/* Group wrapper */
+.permission-group {
+  margin-bottom: 18px;
+}
+
+/* Group header */
+.permission-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--border-light);
+}
+
+/* Group title */
+.permission-group-header strong {
+  font-size: 13px;
+  color: #374151;
+  letter-spacing: 0.04em;
+}
+
+/* Group actions */
+.group-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Permission item */
+.permission-item {
+  display: grid;
+  grid-template-columns: 22px 1fr; /* fixed checkbox column */
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* Checkbox alignment */
+.permission-item input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  justify-self: center;
+}
+
+/* Hover effect */
+.permission-item:hover {
+  background: var(--bg-soft);
+}
+
+/* Improve click UX */
+.permission-item:active {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+
+/* Filter bar layout */
+.filter-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 16px;
+  align-items: flex-end;
+}
+
+/* Compact filter blocks */
+.filter-item {
+  max-width: 360px;
+  width: 100%;
+}
+
+.filter-item label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Header action alignment */
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }

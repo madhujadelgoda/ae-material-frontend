@@ -9,9 +9,9 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(userId: string, password: string) {
+  login(username: string, password: string) {
     return this.http.post<any>(`${this.base}/login`, {
-      userId,
+      username,
       password
     });
   }

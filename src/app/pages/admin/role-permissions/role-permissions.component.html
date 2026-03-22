@@ -1,0 +1,140 @@
+<div class="card">
+
+  <!-- Header -->
+  <div class="card-header flex-between">
+    <h3>Assign Permissions to Role</h3>
+
+    <div class="header-actions">
+
+      <span
+        class="badge green"
+        *ngIf="selectedRoleId">
+        Role Selected
+      </span>
+
+    </div>
+  </div>
+
+  <!-- ======================
+       ROLE SELECTOR BAR
+  ====================== -->
+
+  <div class="filter-row">
+
+    <div class="filter-item">
+
+      <label>Role</label>
+
+      <ng-select
+        [items]="roles"
+        bindLabel="role_name"
+        bindValue="role_id"
+        placeholder="Search role..."
+        [(ngModel)]="selectedRoleId"
+        (change)="onRoleSelect(selectedRoleId!)"
+        [clearable]="true">
+
+        <ng-template ng-option-tmp let-item="item">
+          {{ item.role_name }}
+        </ng-template>
+
+      </ng-select>
+
+    </div>
+
+  </div>
+
+  <!-- ======================
+       PERMISSIONS
+  ====================== -->
+
+  <div *ngIf="selectedRoleId">
+
+    <!-- SEARCH BAR -->
+    <div class="filter-row">
+
+      <div class="filter-item">
+
+        <label>Search Permissions</label>
+
+        <input
+          type="text"
+          class="input"
+          placeholder="Type to filter permissions..."
+          [(ngModel)]="search"
+        />
+
+      </div>
+
+    </div>
+
+    <!-- LIST -->
+    <div class="permission-container">
+
+      <div
+        class="permission-group"
+        *ngFor="let group of groupedPermissions"
+      >
+
+        <div class="permission-group-header">
+
+          <strong>{{ group[0] | uppercase }}</strong>
+
+          <div class="group-actions">
+
+            <button
+              class="btn small ghost"
+              (click)="selectAll(group[1])">
+              Select All
+            </button>
+
+            <button
+              class="btn small ghost"
+              (click)="clearAll(group[1])">
+              Clear
+            </button>
+
+          </div>
+
+        </div>
+
+        <label
+          class="permission-item"
+          *ngFor="let p of group[1]"
+        >
+
+          <input
+            type="checkbox"
+            [checked]="selectedPermissionIds.includes(p.permission_id)"
+            (change)="togglePermission(p.permission_id)"
+          />
+
+          <span>{{ p.permission_key }}</span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="flex-between" style="margin-top:16px">
+
+      <span class="muted">
+        {{ selectedPermissionIds.length }} selected
+      </span>
+
+      <button
+        class="btn primary"
+        (click)="save()"
+        [disabled]="loading">
+
+        {{ loading ? 'Saving…' : 'Save Changes' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

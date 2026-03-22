@@ -1,34 +1,74 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+
 import { environment } from '../../../environments/environment';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
+  selector: 'app-locator',
+  imports: [
+    CommonModule,
+    RouterModule,          
+    HasPermissionDirective 
+  ],
   templateUrl: './locator.html'
 })
 export class LocatorComponent implements OnInit {
 
-  locator: any;
+  locator: any = null;
   materials: any[] = [];
+
+  loading = false;
+  error: string | null = null;
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadLocator();
-    this.loadAvailableMaterials();
+    this.loadMaterials();
   }
 
-  loadLocator() {
+  // ============================
+  // LOAD LOCATOR INFO
+  // ============================
+
+  loadLocator(): void {
     this.http
       .get(`${environment.apiUrl}/erp/locator`)
-      .subscribe(data => (this.locator = data));
+      .subscribe({
+        next: data => {
+          this.locator = data;
+        },
+        error: () => {
+          this.error = 'Failed to load locator';
+        }
+      });
   }
 
-  loadAvailableMaterials() {
+  // ============================
+  // LOAD INVENTORY SUMMARY
+  // ============================
+
+  loadMaterials(): void {
+
+    this.loading = true;
+    this.error = null;
+
     this.http
-      .get<any[]>(`${environment.apiUrl}/materials/available`)
-      .subscribe(data => (this.materials = data));
+      .get<any[]>(`${environment.apiUrl}/materials/locator-inventory`)
+      .subscribe({
+        next: data => {
+          this.materials = data;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load locator inventory';
+          this.loading = false;
+        }
+      });
   }
+
 }

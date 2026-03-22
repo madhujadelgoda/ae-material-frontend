@@ -5,7 +5,9 @@ import {
   RouterLinkActive
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
 import { StorageService } from '../../core/services/storage.service';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   standalone: true,
@@ -13,21 +15,36 @@ import { StorageService } from '../../core/services/storage.service';
   imports: [
     CommonModule,
     RouterLink,
-    RouterLinkActive 
+    RouterLinkActive,
+    HasPermissionDirective
   ],
   templateUrl: './sidebar.html'
 })
 export class SidebarComponent {
 
-  isAdmin = false;
   username = '';
 
   constructor(private router: Router) {
-    this.isAdmin = StorageService.hasRole('ADMIN');
     this.username = StorageService.getUsername();
   }
 
-  logout() {
+  isAdmin(): boolean {
+    return StorageService.hasRole('ADMIN');
+  }
+
+  confirmLogout(): void {
+    const confirmed = window.confirm(
+      'Are you sure you want to logout?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.logout();
+  }
+
+  private logout(): void {
     StorageService.clear();
     this.router.navigate(['/login']);
   }

@@ -6,22 +6,36 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class MaterialService {
-  private base = `${environment.apiUrl}/materials`;
+
+  private baseUrl = `${environment.apiUrl}/materials`;
 
   constructor(private http: HttpClient) {}
 
-  // Allocate material to a team
+  // =========================
+  // Allocate material to team
+  // =========================
   allocate(payload: {
     team_id: number;
-    locator_id: number;
     material_code: string;
     quantity: number;
   }) {
-    return this.http.post(`${this.base}/allocate`, payload);
+    return this.http.post(`${this.baseUrl}/allocate`, payload);
   }
 
-  // Get available materials with remaining quantity
+  // ==================================
+  // Get available materials in locator
+  // ==================================
   getAvailableMaterials() {
-    return this.http.get<any[]>(`${this.base}/available`);
+    return this.http.get<any[]>(`${this.baseUrl}/available`);
   }
+
+  // ==================================
+// Locator inventory summary
+// ==================================
+getLocatorInventory() {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/locator-inventory`
+  );
+}
+
 }

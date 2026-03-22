@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { environment } from '../../../environments/environment';
+
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { StorageService } from '../../core/services/storage.service';
 
 @Component({
   standalone: true,
@@ -11,121 +15,231 @@ import { environment } from '../../../environments/environment';
   imports: [
     CommonModule,
     FormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    HasPermissionDirective
   ],
   templateUrl: './return-material.html'
 })
 export class ReturnMaterialComponent implements OnInit {
 
-  assignments: any[] = [];
-  teams: any[] = [];
+  allocations: any[] = [];
 
-  returnMap: Record<number, number> = {};
-
-  filterScope: 'today' | 'all' = 'today';
-  fromDate = '';
-  toDate = '';
-  selectedTeamFilter: number | null = null;
+  usedQty: Record<number, number> = {};
+  damagedQty: Record<number, number> = {};
 
   loading = false;
+
+  canReturn = false;
 
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
-    this.loadTeams();
-    this.loadAssignments();
+  // ============================
+  // INIT
+  // ============================
+
+  ngOnInit(): void {
+
+    this.canReturn =
+      StorageService.hasPermission('material.return');
+
+    this.loadAllocations();
   }
 
-  // ----------------------------
-  // Snackbar helper
-  // ----------------------------
-  showSnack(message: string, type: 'success' | 'error' | 'info' = 'info') {
+  // ============================
+  // TOAST
+  // ============================
+
+  notify(
+    message: string,
+    type: 'success' | 'error' = 'success'
+  ): void {
+
     this.snackBar.open(message, 'Close', {
-      duration: 3000,
+      duration: 3500,
       horizontalPosition: 'right',
       verticalPosition: 'top',
       panelClass: [`snackbar-${type}`]
     });
   }
 
-  // ----------------------------
-  // Load teams
-  // ----------------------------
-  loadTeams() {
-    this.http.get<any[]>(`${environment.apiUrl}/teams`)
+  // ============================
+  // LOAD
+  // ============================
+
+  loadAllocations(): void {
+
+    this.http
+      .get<any[]>(`${environment.apiUrl}/materials/allocations`)
       .subscribe({
-        next: data => this.teams = data,
-        error: () => this.showSnack('Failed to load teams', 'error')
+        next: data => {
+          this.allocations = data;
+
+          // clear preview caches
+          this.usedQty = {};
+          this.damagedQty = {};
+        },
+        error: () =>
+          this.notify('Failed to load allocations', 'error')
       });
   }
 
-  // ----------------------------
-  // Load assignments
-  // ----------------------------
-  loadAssignments() {
-    const params: any = {
-      scope: this.filterScope
-    };
+  // ============================
+  // LOCKED?
+  // ============================
 
-    if (this.fromDate && this.toDate) {
-      params.from = this.fromDate;
-      params.to = this.toDate;
-    }
-
-    if (this.selectedTeamFilter) {
-      params.team_id = this.selectedTeamFilter;
-    }
-
-    this.http.get<any[]>(`${environment.apiUrl}/materials/assignments`, { params })
-      .subscribe({
-        next: data => this.assignments = data,
-        error: () => this.showSnack('Failed to load assignments', 'error')
-      });
+  isLocked(a: any): boolean {
+    return a.status === 'RETURNED';
   }
 
-  // ----------------------------
-  // Remaining quantity
-  // ----------------------------
-  remaining(a: any): number {
-    return a.quantity - (a.returned_quantity ?? 0);
+  // ============================
+  // RETURN PREVIEW
+  // ============================
+
+  returnedQty(a: any): number | null {
+
+    // backend truth
+    if (this.isLocked(a)) {
+      return a.returned_quantity;
+    }
+
+    const used = this.usedQty[a.allocation_id] || 0;
+
+    if (used <= 0) {
+      return null;
+    }
+
+    return Math.max(
+      a.allocated_quantity - used,
+      0
+    );
   }
 
-  // ----------------------------
-  // Submit return
-  // ----------------------------
-  submitReturn(a: any) {
-    const qty = this.returnMap[a.allocation_id];
+  // ============================
+  // SUBMIT
+  // ============================
 
-    if (!qty || qty <= 0) {
-      this.showSnack('Enter a valid return quantity', 'error');
+  submitUsageAndReturn(a: any): void {
+
+    if (!this.canReturn) return;
+    if (this.isLocked(a) || this.loading) return;
+
+    const used = this.usedQty[a.allocation_id] || 0;
+    const damaged = this.damagedQty[a.allocation_id] || 0;
+
+    if (used + damaged <= 0) {
+      this.notify(
+        'Used or Damaged quantity is required',
+        'error'
+      );
       return;
     }
 
-    if (qty > this.remaining(a)) {
-      this.showSnack(`Cannot return more than ${this.remaining(a)}`, 'error');
+    if (used + damaged > a.allocated_quantity) {
+      this.notify(
+        'Used + Damaged exceeds allocated quantity',
+        'error'
+      );
       return;
     }
+
+    const returned =
+      a.allocated_quantity - used;
+
+    const ok = window.confirm(
+      `Confirm usage & return?\n\n` +
+      `Allocated : ${a.allocated_quantity}\n` +
+      `Used      : ${used}\n` +
+      `Damaged   : ${damaged}\n` +
+      `Returned  : ${returned}`
+    );
+
+    if (!ok) return;
 
     this.loading = true;
 
-    this.http.post(`${environment.apiUrl}/materials/return`, {
+    // ============================
+    // STEP 1: USED
+    // ============================
+
+    this.http.post(`${environment.apiUrl}/materials/usage`, {
       allocation_id: a.allocation_id,
-      quantity_returned: qty
+      quantity: used,
+      usage_type: 'USED',
+      remarks: null
     }).subscribe({
+
       next: () => {
-        this.showSnack(`Returned ${qty} successfully`, 'error');
-        this.returnMap[a.allocation_id] = 0;
-        this.loadAssignments();
+
+        const damaged$ =
+          damaged > 0
+            ? this.http.post(
+                `${environment.apiUrl}/materials/usage`,
+                {
+                  allocation_id: a.allocation_id,
+                  quantity: damaged,
+                  usage_type: 'DAMAGED',
+                  remarks: null
+                }
+              )
+            : null;
+
+        const proceedToReturn = () => {
+
+          // ============================
+          // STEP 3: RETURN
+          // ============================
+
+          this.http.post(
+            `${environment.apiUrl}/materials/return/${a.allocation_id}`,
+            {}
+          ).subscribe({
+
+            next: () => {
+              this.notify(
+                'Usage recorded & materials returned'
+              );
+              this.loadAllocations();
+            },
+
+            error: () => {
+              this.notify('Return failed', 'error');
+              this.loading = false;
+            },
+
+            complete: () => {
+              this.loading = false;
+            }
+
+          });
+        };
+
+        if (damaged$) {
+          damaged$.subscribe({
+            next: proceedToReturn,
+            error: () => {
+              this.notify(
+                'Damaged usage failed',
+                'error'
+              );
+              this.loading = false;
+            }
+          });
+        } else {
+          proceedToReturn();
+        }
       },
-      error: err => {
-        this.showSnack(err.error?.message || 'Return failed', 'error');
-      },
-      complete: () => {
+
+      error: () => {
+        this.notify(
+          'Usage recording failed',
+          'error'
+        );
         this.loading = false;
       }
+
     });
   }
 }

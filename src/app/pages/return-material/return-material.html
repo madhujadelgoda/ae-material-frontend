@@ -1,89 +1,97 @@
 <div class="card">
 
   <div class="card-header flex-between">
-    <h3>Return Materials</h3>
+    <h3>Allocation Usage & Return</h3>
   </div>
 
-  <!-- Filters -->
-  <div class="filters-row">
-    <div class="form-group inline">
-      <label>View</label>
-      <select [(ngModel)]="filterScope" (change)="loadAssignments()">
-        <option value="today">Today</option>
-        <option value="all">All</option>
-      </select>
-    </div>
-
-    <div class="form-group inline">
-      <label>From</label>
-      <input type="date" [(ngModel)]="fromDate" (change)="loadAssignments()" />
-    </div>
-
-    <div class="form-group inline">
-      <label>To</label>
-      <input type="date" [(ngModel)]="toDate" (change)="loadAssignments()" />
-    </div>
-
-    <div class="form-group inline">
-      <label>Team</label>
-      <select [(ngModel)]="selectedTeamFilter" (change)="loadAssignments()">
-        <option [ngValue]="null">All Teams</option>
-        <option *ngFor="let t of teams" [value]="t.team_id">
-          {{ t.team_name }}
-        </option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Table -->
   <table class="table table--compact">
+
     <thead>
       <tr>
         <th>Team</th>
         <th>Material</th>
         <th>Allocated</th>
+        <th>Used</th>
+        <th>Damaged</th>
         <th>Returned</th>
-        <th>Remaining</th>
-        <th>Return Qty</th>
-        <th width="120">Action</th>
+        <th width="160">Action</th>
       </tr>
     </thead>
 
     <tbody>
-      <tr *ngFor="let a of assignments">
+
+      <tr *ngFor="let a of allocations">
+
         <td>{{ a.team_name }}</td>
-        <td>{{ a.material_name }}</td>
-        <td>{{ a.quantity }}</td>
-        <td>{{ a.returned_quantity || 0 }}</td>
+        <td>{{ a.material_code }}</td>
 
-        <td>
-          <span class="badge green">
-            {{ remaining(a) }}
-          </span>
-        </td>
+        <td>{{ a.allocated_quantity }}</td>
 
+        <!-- USED -->
         <td>
           <input
             class="qty-input"
             type="number"
-            min="1"
-            [max]="remaining(a)"
-            [(ngModel)]="returnMap[a.allocation_id]"
-            [disabled]="remaining(a) === 0"
+            min="0"
+            [max]="a.allocated_quantity"
+            [(ngModel)]="usedQty[a.allocation_id]"
+            [disabled]="isLocked(a) || !canReturn"
           />
         </td>
 
+        <!-- DAMAGED -->
         <td>
-          <button
-            class="btn primary small"
-            (click)="submitReturn(a)"
-            [disabled]="remaining(a) === 0 || loading"
-          >
-            Return
-          </button>
+          <input
+            class="qty-input"
+            type="number"
+            min="0"
+            [max]="a.allocated_quantity"
+            [(ngModel)]="damagedQty[a.allocation_id]"
+            [disabled]="isLocked(a) || !canReturn"
+          />
         </td>
+
+        <!-- RETURNED -->
+        <td>
+          <span
+            class="badge"
+            [ngClass]="isLocked(a) ? 'red' : 'green'">
+
+            {{ returnedQty(a) === null
+                ? '—'
+                : returnedQty(a)
+            }}
+
+          </span>
+        </td>
+
+        <!-- ACTION -->
+        <td>
+
+          <button
+            class="btn small primary"
+            *hasPermission="'material.return'"
+            (click)="submitUsageAndReturn(a)"
+            [disabled]="
+              loading ||
+              isLocked(a) ||
+              !canReturn ||
+              (usedQty[a.allocation_id] || 0) <= 0
+            ">
+
+            {{ isLocked(a)
+                ? 'Completed'
+                : 'Confirm & Return'
+            }}
+
+          </button>
+
+        </td>
+
       </tr>
+
     </tbody>
+
   </table>
 
 </div>

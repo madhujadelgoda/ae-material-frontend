@@ -5,25 +5,33 @@
     <h3>Bulk Material Allocation</h3>
 
     <span class="badge green" *ngIf="locator">
-      {{ locator.locator_name }} ({{ locator.locator_id }})
+      {{ locator.locator_code }}
     </span>
   </div>
 
-  <!-- Team selection -->
-  <div class="form-group">
-    <label>Select Team</label>
-    <select [(ngModel)]="selectedTeamId">
-      <option [ngValue]="null">Select team</option>
-      <option *ngFor="let t of teams" [value]="t.team_id">
-        {{ t.team_name }}
-      </option>
-    </select>
+  <!-- Team -->
+  <div class="form-group wide"
+       *hasPermission="'material.allocate.bulk'">
+
+    <label>Team</label>
+
+    <ng-select
+      [items]="teams"
+      bindLabel="team_name"
+      bindValue="team_id"
+      placeholder="Search team..."
+      [(ngModel)]="selectedTeamId"
+      [clearable]="true">
+    </ng-select>
   </div>
 
-  <!-- Materials table -->
-  <table class="table table--compact">
+  <!-- Materials -->
+  <table
+    class="table table--compact"
+    *hasPermission="'material.allocate.bulk'">
+
     <thead>
-      <tr class ="table-header">
+      <tr>
         <th style="width: 45%">Material</th>
         <th style="width: 20%">Available</th>
         <th style="width: 20%">Quantity</th>
@@ -32,28 +40,36 @@
     </thead>
 
     <tbody>
-      <tr *ngFor="let row of rows; let i = index">
-        <td>
-          <select [(ngModel)]="row.material_code">
-            <option value="">Select material</option>
 
-            <option
-              *ngFor="let m of materials"
-              [value]="m.material_code"
-              [disabled]="isMaterialDisabled(m.material_code, i) || m.remaining_quantity === 0"
-            >
-              {{ m.material_name }}
-              ({{ remainingForRow(m.material_code, i) }} {{ m.uom }})
-            </option>
-          </select>
+      <tr *ngFor="let row of rows; let i = index">
+
+        <!-- Material -->
+        <td>
+          <ng-select
+            [items]="materials"
+            bindLabel="material_name"
+            bindValue="erp_code"
+            placeholder="Search material..."
+            [(ngModel)]="row.material_code"
+            [clearable]="true">
+
+            <ng-template ng-option-tmp let-item="item">
+              {{ item.material_name }}
+              — {{ remainingForRow(item.erp_code, i) }}
+              {{ item.erp_uom }}
+            </ng-template>
+
+          </ng-select>
         </td>
 
+        <!-- Available -->
         <td>
           <span class="badge green">
             {{ remainingForRow(row.material_code, i) }}
           </span>
         </td>
 
+        <!-- Quantity -->
         <td>
           <input
             class="qty-input"
@@ -61,35 +77,44 @@
             min="1"
             [max]="remainingForRow(row.material_code, i)"
             [(ngModel)]="row.quantity"
+            [disabled]="!row.material_code"
           />
         </td>
 
+        <!-- Remove -->
         <td>
           <button
             class="btn small warn"
             *ngIf="rows.length > 1"
-            (click)="removeRow(i)"
-          >
+            (click)="removeRow(i)">
             Remove
           </button>
         </td>
+
       </tr>
+
     </tbody>
   </table>
 
   <!-- Actions -->
-  <div class="flex-between" style="margin-top: 16px">
-    <button class="btn ghost small" (click)="addRow()">
+  <div class="flex-between"
+       style="margin-top: 16px"
+       *hasPermission="'material.allocate.bulk'">
+
+    <button class="btn ghost small"
+            (click)="addRow()">
       + Add Row
     </button>
 
     <button
       class="btn primary"
       (click)="submit()"
-      [disabled]="loading"
-    >
+      [disabled]="loading || !selectedTeamId">
+
       {{ loading ? 'Allocating…' : 'Allocate Materials' }}
+
     </button>
+
   </div>
 
   <!-- Feedback -->

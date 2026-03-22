@@ -4,33 +4,42 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AdminUserService {
-  private base = `${environment.apiUrl}/admin/users`;
+
+  private base = `${environment.apiUrl}/admin/users/`;
 
   constructor(private http: HttpClient) {}
 
+  //  users
   getUsers() {
     return this.http.get<any[]>(this.base);
   }
 
-  createUser(payload: any) {
+  createUser(payload: {
+    username: string;
+    password: string;
+    full_name?: string;
+    role_ids: number[];
+  }) {
     return this.http.post(this.base, payload);
   }
 
-  updateUser(id: number, payload: any) {
-    return this.http.patch(`${this.base}/${id}`, payload);
+  updateUser(
+    id: number,
+    payload: {
+      full_name?: string;
+      role_ids: number[];
+    }
+  ) {
+    return this.http.put(`${this.base}/${id}`, payload);
   }
 
-  updateStatus(id: number, status: string) {
-    return this.http.patch(`${this.base}/${id}/status`, { status });
+  updateStatus(id: number, status: 'ACTIVE' | 'INACTIVE') {
+    return this.http.put(`${this.base}/${id}/status/${status}`, {});
   }
 
-  updateRoles(id: number, roles: string[]) {
-    return this.http.patch(`${this.base}/${id}/roles`, { roles });
-  }
-
-  resetPassword(id: number, new_password: string) {
-    return this.http.patch(`${this.base}/${id}/reset-password`, {
-      new_password
+  resetPassword(id: number, password: string) {
+    return this.http.post(`${this.base}/${id}/reset-password`, {
+      password
     });
   }
 
