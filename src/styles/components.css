@@ -14,48 +14,80 @@
 
 /* Tables */
 .table {
+  --table-border: #e6ebf3;
+  --table-head-bg: #f8fafc;
+  --table-head-text: #475569;
+  --table-row-hover: #f8fbff;
+
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
+  background: #ffffff;
+  border: 1px solid var(--table-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
 
 /* Header */
 .table th {
   text-align: left;
-  padding: 8px 10px;
-  font-size: 0.8rem;
-  font-weight: 600;
-
-  color: #ffffff;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
-  background: #1f6fb2;
-
-  line-height: 1.2;
+  padding: 11px 14px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--table-head-text);
+  border-bottom: 1px solid var(--table-border);
+  background: var(--table-head-bg);
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 /* Body cells */
 .table td {
-  padding: 10px 12px;         
-  font-size: 0.85rem;
-  border-bottom: 1px solid var(--border-light);
-  line-height: 1.25;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  color: #0f172a;
+  border-bottom: 1px solid #edf2f8;
+  line-height: 1.35;
   vertical-align: middle;
 }
 
 /* Optional: hover highlight */
 .table tbody tr:hover {
-  background: var(--bg-soft);
+  background: var(--table-row-hover);
+}
+
+/* Subtle zebra striping for readability in large tables */
+.table tbody tr:nth-child(even) {
+  background: #fcfdff;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table th:first-child,
+.table td:first-child {
+  padding-left: 16px;
+}
+
+.table th:last-child,
+.table td:last-child {
+  padding-right: 16px;
 }
 
 /* Optional: tighter variant (use class="table table--compact") */
 .table--compact th {
-  padding: 6px 8px;
-  font-size: 0.78rem;
+  padding: 9px 10px;
+  font-size: 0.7rem;
 }
 
 .table--compact td {
-  padding: 5px 8px;
-  font-size: 0.82rem;
+  padding: 8px 10px;
+  font-size: 0.8rem;
 }
 
 
