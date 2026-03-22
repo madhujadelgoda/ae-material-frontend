@@ -1,0 +1,107 @@
+<div class="card" style="margin-top:16px;">
+
+  <div class="card-header flex-between">
+    <h3>Locator Inventory</h3>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="muted">
+    Loading inventory...
+  </div>
+
+  <!-- TABLE -->
+  <table
+    *ngIf="!loading && materials.length"
+    class="table table--compact"
+  >
+
+    <thead>
+      <tr>
+        <th>ERP Code</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Description</th>
+
+        <!-- COMBINED -->
+        <th>UOM</th>
+
+        <th>Stock Assigned</th>
+        <th>Allocated</th>
+        <th>Used</th>
+        <th>Damaged</th>
+        <th>Returned</th>
+        <th>Available Now</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let m of materials">
+
+        <!-- ERP -->
+        <td>
+          <code>{{ m.erp_code }}</code>
+        </td>
+
+        <td>{{ m.material_name }}</td>
+
+        <td>{{ m.material_subcategory }}</td>
+
+        <td class="muted">
+          {{ m.erp_description }}
+        </td>
+
+        <!-- UOM + MEASURE -->
+        <td>
+          {{ m.erp_uom }}
+          <small class="muted">
+            ({{ m.measurement_code }})
+          </small>
+        </td>
+
+        <!-- STOCK -->
+        <td>
+          <strong>{{ m.stock_assigned }}</strong>
+        </td>
+
+        <td>{{ m.allocated_to_teams }}</td>
+
+        <td>{{ m.used_qty }}</td>
+
+        <td>{{ m.damaged_qty }}</td>
+
+        <td>{{ m.returned_qty }}</td>
+
+        <!-- LIVE -->
+        <td>
+          <span
+            class="badge"
+            [class.green]="m.available_now > 0"
+            [class.red]="m.available_now === 0"
+          >
+            {{ m.available_now }}
+          </span>
+        </td>
+
+      </tr>
+
+      <!-- EMPTY -->
+      <tr *ngIf="!loading && materials.length === 0">
+        <td colspan="11" style="text-align:center">
+          No materials found in this locator.
+        </td>
+      </tr>
+
+    </tbody>
+
+  </table>
+
+  <!-- EMPTY OUTSIDE -->
+  <div
+    *ngIf="!loading && !materials.length"
+    class="muted"
+  >
+    No materials found in this locator.
+  </div>
+  
+</div>

@@ -1,4 +1,15 @@
-<div class="dashboard-grid">
+<!-- Loading -->
+<div *ngIf="loading" class="card">
+  <p>Loading dashboard data…</p>
+</div>
+
+<!-- Error -->
+<div *ngIf="error" class="card error">
+  {{ error }}
+</div>
+
+<!-- Dashboard -->
+<div *ngIf="!loading && !error" class="dashboard-grid">
 
   <div class="card">
     <h4>Total Materials</h4>

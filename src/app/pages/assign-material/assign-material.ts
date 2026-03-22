@@ -2,13 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 import { environment } from '../../../environments/environment';
 import { MaterialService } from '../../core/services/material.service';
+
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { StorageService } from '../../core/services/storage.service';
 
 @Component({
   standalone: true,
   selector: 'app-assign-material',
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgSelectModule,
+    HasPermissionDirective 
+  ],
   templateUrl: './assign-material.html'
 })
 export class AssignMaterialComponent implements OnInit {
@@ -25,45 +35,58 @@ export class AssignMaterialComponent implements OnInit {
   success = '';
   error = '';
 
+  /** permission flag */
+  canAssign = false;
+
   constructor(
     private http: HttpClient,
     private materialService: MaterialService
   ) {}
 
   ngOnInit(): void {
+
+    // read permission once
+    this.canAssign = StorageService.hasPermission('material.allocate');
+
     this.loadTeams();
     this.loadLocator();
-    this.loadAvailableMaterials();
   }
 
   // -------------------------
   // Load teams
   // -------------------------
   loadTeams() {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/teams`)
-      .subscribe({
-        next: data => (this.teams = data),
-        error: () => (this.error = 'Failed to load teams')
-      });
+    this.http.get<any[]>(`${environment.apiUrl}/teams`).subscribe({
+      next: data => (this.teams = data),
+      error: () => (this.error = 'Failed to load teams')
+    });
   }
 
   // -------------------------
-  // Load locator info
+  // Load locator
   // -------------------------
   loadLocator() {
-    this.http
-      .get(`${environment.apiUrl}/erp/locator`)
-      .subscribe({
-        next: data => (this.locator = data),
-        error: () => (this.error = 'Failed to load locator')
-      });
+    this.http.get(`${environment.apiUrl}/erp/locator`).subscribe({
+      next: data => (this.locator = data),
+      error: () => (this.error = 'Failed to load locator')
+    });
   }
 
   // -------------------------
-  // Load materials with remaining qty
+  // When team changes
   // -------------------------
-  loadAvailableMaterials() {
+  onTeamSelected() {
+
+    if (!this.canAssign) return;
+
+    this.selectedMaterial = null;
+    this.quantity = null;
+
+    if (!this.selectedTeamId) {
+      this.materials = [];
+      return;
+    }
+
     this.materialService.getAvailableMaterials().subscribe({
       next: data => (this.materials = data),
       error: () => (this.error = 'Failed to load materials')
@@ -74,11 +97,19 @@ export class AssignMaterialComponent implements OnInit {
   // Submit allocation
   // -------------------------
   submit() {
+
+    if (!this.canAssign) return;
+
     this.error = '';
     this.success = '';
 
-    if (!this.selectedTeamId || !this.selectedMaterial || !this.quantity) {
-      this.error = 'All fields are required';
+    if (!this.selectedTeamId) {
+      this.error = 'Please select a team first';
+      return;
+    }
+
+    if (!this.selectedMaterial || !this.quantity) {
+      this.error = 'Material and quantity are required';
       return;
     }
 
@@ -88,7 +119,9 @@ export class AssignMaterialComponent implements OnInit {
     }
 
     if (this.quantity > this.selectedMaterial.remaining_quantity) {
-      this.error = `Only ${this.selectedMaterial.remaining_quantity} ${this.selectedMaterial.uom} available`;
+      this.error =
+        `Only ${this.selectedMaterial.remaining_quantity}
+         ${this.selectedMaterial.erp_uom} available`;
       return;
     }
 
@@ -96,22 +129,19 @@ export class AssignMaterialComponent implements OnInit {
 
     this.materialService.allocate({
       team_id: this.selectedTeamId,
-      locator_id: this.locator.locator_id,
-      material_code: this.selectedMaterial.material_code,
+      material_code: this.selectedMaterial.erp_code,
       quantity: this.quantity
     }).subscribe({
       next: () => {
         this.success = 'Material allocated successfully';
 
-        // reset inputs
         this.quantity = null;
         this.selectedMaterial = null;
 
-        // reload availability
-        this.loadAvailableMaterials();
+        this.onTeamSelected();
       },
       error: err => {
-        this.error = err.error?.message || 'Allocation failed';
+        this.error = err.error?.detail || 'Allocation failed';
       },
       complete: () => {
         this.loading = false;

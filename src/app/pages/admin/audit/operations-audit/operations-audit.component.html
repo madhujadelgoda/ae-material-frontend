@@ -1,0 +1,60 @@
+<div class="card">
+
+  <div class="card-header flex-between">
+    <h3>Operations Audit</h3>
+  </div>
+
+  <table class="table table--compact">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Action</th>
+        <th>Material</th>
+        <th>Qty</th>
+        <th>Team</th>
+        <th>By</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let a of audits">
+        <td>{{ a.created_at | date:'short' }}</td>
+
+        <td>
+          <span
+            class="badge"
+            [class.green]="a.action === 'ALLOCATED'"
+            [class.orange]="a.action === 'USED' || a.action === 'DAMAGED'"
+            [class.gray]="a.action === 'RETURNED'"
+          >
+            {{ a.action || 'UNKNOWN' }}
+          </span>
+        </td>
+
+        <td>{{ a.material_code }}</td>
+        <td>{{ a.quantity }}</td>
+        <td>{{ a.team_name || '-' }}</td>
+        <td>{{ a.performed_by }}</td>
+        <td>{{ a.performed_role }}</td>
+      </tr>
+
+      <tr *ngIf="!audits.length">
+        <td colspan="7" class="text-center muted">
+          No audit records found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button class="btn" (click)="prevPage()" [disabled]="offset === 0">
+      Previous
+    </button>
+
+    <button class="btn" (click)="nextPage()" [disabled]="audits.length < limit">
+      Next
+    </button>
+  </div>
+
+</div>

@@ -1,38 +1,173 @@
-<div class="card">
+<!-- =========================
+     CREATE PERMISSION
+========================= -->
 
-  <!-- Header -->
+<ng-container *hasPermission="'permission.create'">
+
+  <div class="card">
+
+    <div class="card-header">
+      <h3>Create Permission</h3>
+    </div>
+
+    <div class="filters-row">
+
+      <div class="form-group inline wide">
+        <label>Permission Key</label>
+        <input
+          class="input"
+          type="text"
+          placeholder="e.g. material.allocate"
+          [(ngModel)]="key"
+        />
+        <small class="hint">
+          Format: module.action
+        </small>
+      </div>
+
+      <div class="form-group inline wide">
+        <label>Description</label>
+        <input
+          class="input"
+          type="text"
+          placeholder="Short description"
+          [(ngModel)]="desc"
+        />
+      </div>
+
+    </div>
+
+    <button
+      class="btn primary"
+      (click)="create()"
+    >
+      Create Permission
+    </button>
+
+  </div>
+
+</ng-container>
+
+<!-- =========================
+     PERMISSIONS TABLE
+========================= -->
+
+<div class="card" style="margin-top: 20px">
+
   <div class="card-header flex-between">
     <h3>Permissions</h3>
 
-    <span class="badge green">
-      {{ permissions.length }} Total
-    </span>
+    <div class="actions">
+      <span class="badge green">
+        {{ permissions.length }} Total
+      </span>
+    </div>
   </div>
 
-  <!-- Table -->
   <table class="table table--compact">
+
     <thead>
       <tr>
         <th style="width: 35%">Permission Key</th>
         <th>Description</th>
+        <th style="width: 200px">Actions</th>
       </tr>
     </thead>
 
     <tbody>
+
       <tr *ngFor="let p of permissions">
+
+        <!-- KEY -->
         <td>
           <code>{{ p.permission_key }}</code>
         </td>
-        <td>{{ p.description }}</td>
+
+        <!-- DESCRIPTION -->
+        <td>
+
+          <!-- VIEW MODE -->
+          <span *ngIf="editing?.permission_id !== p.permission_id">
+            {{ p.description || '—' }}
+          </span>
+
+          <!-- EDIT MODE -->
+          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+
+            <input
+              *hasPermission="'permission.update'"
+              class="input"
+              type="text"
+              [(ngModel)]="desc"
+            />
+
+          </ng-container>
+
+        </td>
+
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+
+        <td>
+
+          <!-- VIEW -->
+          <ng-container *ngIf="editing?.permission_id !== p.permission_id">
+
+            <button
+              class="btn small warn"
+              (click)="startEdit(p)"
+              *hasPermission="'permission.update'"
+            >
+              Edit
+            </button>
+
+            <button
+              class="btn danger small"
+              (click)="delete(p)"
+              *hasPermission="'permission.delete'"
+            >
+              Delete
+            </button>
+
+          </ng-container>
+
+          <!-- EDIT -->
+          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+
+            <button
+              class="btn small primary"
+              (click)="saveEdit()"
+              *hasPermission="'permission.update'"
+            >
+              Save
+            </button>
+
+            <button
+              class="btn small ghost"
+              (click)="cancelEdit()"
+            >
+              Cancel
+            </button>
+
+          </ng-container>
+
+        </td>
+
       </tr>
 
-      <!-- Empty state -->
+      <!-- EMPTY STATE -->
       <tr *ngIf="permissions.length === 0">
-        <td colspan="2" style="text-align: center; color: var(--text-secondary)">
+        <td
+          colspan="3"
+          style="text-align:center; color: var(--text-secondary)"
+        >
           No permissions found
         </td>
       </tr>
+
     </tbody>
+
   </table>
 
 </div>
