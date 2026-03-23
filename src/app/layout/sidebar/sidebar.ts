@@ -27,9 +27,16 @@ export class SidebarComponent {
   @Output() navigate = new EventEmitter<void>();
 
   username = '';
+  userRole = 'System User';
+  showLogoutConfirm = false;
 
   constructor(private router: Router) {
     this.username = StorageService.getUsername();
+
+    const roles = StorageService.getRoles();
+    if (roles.length > 0) {
+      this.userRole = roles[0].replace(/_/g, ' ');
+    }
   }
 
   isAdmin(): boolean {
@@ -37,14 +44,15 @@ export class SidebarComponent {
   }
 
   confirmLogout(): void {
-    const confirmed = window.confirm(
-      'Are you sure you want to logout?'
-    );
+    this.showLogoutConfirm = true;
+  }
 
-    if (!confirmed) {
-      return;
-    }
+  closeLogoutConfirm(): void {
+    this.showLogoutConfirm = false;
+  }
 
+  confirmLogoutNow(): void {
+    this.showLogoutConfirm = false;
     this.logout();
   }
 

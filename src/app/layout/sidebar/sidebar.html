@@ -161,13 +161,53 @@
 
       <div class="user-meta">
         <div class="user-name">{{ username }}</div>
+        <div class="user-role">{{ userRole }}</div>
+      </div>
+
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="confirmLogout()"
+        aria-label="Logout"
+        title="Logout"
+      >
+        <span class="material-symbols-rounded logout-icon">logout</span>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="logout-confirm-backdrop"
+    *ngIf="showLogoutConfirm"
+    (click)="closeLogoutConfirm()"
+  >
+    <div
+      class="logout-confirm-modal"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="logout-confirm-icon-wrap">
+        <span class="material-symbols-rounded">logout</span>
+      </div>
+
+      <h4>Sign out?</h4>
+      <p>You are about to log out from this session.</p>
+
+      <div class="logout-confirm-actions">
         <button
           type="button"
-          class="logout-btn"
-          (click)="confirmLogout()"
+          class="btn ghost small"
+          (click)="closeLogoutConfirm()"
         >
-          <span class="material-symbols-rounded logout-icon">logout</span>
-          <span class="logout-label">Logout</span>
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="btn danger small"
+          (click)="confirmLogoutNow()"
+        >
+          <span class="material-symbols-rounded btn-icon">logout</span>
+          Logout
         </button>
       </div>
     </div>
