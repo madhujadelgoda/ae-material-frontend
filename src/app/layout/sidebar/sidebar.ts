@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   Router,
   RouterLink,
   RouterLinkActive
 } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 import { StorageService } from '../../core/services/storage.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
@@ -21,6 +21,10 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
   templateUrl: './sidebar.html'
 })
 export class SidebarComponent {
+  @Input() collapsed = false;
+  @Input() isMobileViewport = false;
+  @Input() mobileOpen = false;
+  @Output() navigate = new EventEmitter<void>();
 
   username = '';
 
@@ -44,8 +48,17 @@ export class SidebarComponent {
     this.logout();
   }
 
+  onNavigate(): void {
+    if (!this.isMobileViewport) {
+      return;
+    }
+
+    this.navigate.emit();
+  }
+
   private logout(): void {
     StorageService.clear();
+    this.navigate.emit();
     this.router.navigate(['/login']);
   }
 }
