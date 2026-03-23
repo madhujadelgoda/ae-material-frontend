@@ -90,23 +90,24 @@
             </button>
 
             <button
-              class="btn icon-btn"
+              class="btn icon-btn warning"
               (click)="openReset(u)"
               title="Reset password"
-              style="color: #d97706; border-color: #fde68a; background: #fffbeb;"
             >
               <span class="material-symbols-rounded">lock_reset</span>
             </button>
 
             <button
-              class="btn small"
-              [class.ghost]="u.status === 'ACTIVE'"
-              [class.primary]="u.status !== 'ACTIVE'"
+              class="btn icon-btn status-toggle"
+              [class.active]="u.status === 'ACTIVE'"
+              [class.inactive]="u.status !== 'ACTIVE'"
               (click)="toggleStatus(u)"
               [title]="u.status === 'ACTIVE' ? 'Disable user' : 'Enable user'"
-              style="font-size: 11px; padding: 5px 10px;"
+              [attr.aria-label]="u.status === 'ACTIVE' ? 'Disable user' : 'Enable user'"
             >
-              {{ u.status === 'ACTIVE' ? 'Disable' : 'Enable' }}
+              <span class="material-symbols-rounded">
+                {{ u.status === 'ACTIVE' ? 'block' : 'check_circle' }}
+              </span>
             </button>
 
             <button
