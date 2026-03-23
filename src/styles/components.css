@@ -919,6 +919,92 @@ ng-select {
   width: 100%;
 }
 
+.permission-create-card {
+  border: 1px solid #e6edf7;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.permission-create-header {
+  margin-bottom: 14px;
+}
+
+.permission-create-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(260px, 1.2fr);
+  gap: 12px;
+}
+
+.permission-field-key,
+.permission-field-desc {
+  margin-bottom: 0;
+}
+
+.permission-preview {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  background: #f7fbff;
+}
+
+.permission-preview-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.permission-preview code {
+  background: #eaf2ff;
+  border: 1px solid #c7dcff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.permission-create-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.permission-key-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 900px) {
+  .permission-create-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .permission-preview {
+    grid-column: span 1;
+  }
+
+  .permission-create-actions {
+    justify-content: stretch;
+  }
+
+  .permission-create-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Role permissions UI */
 .permission-container {
   max-height: 420px;
