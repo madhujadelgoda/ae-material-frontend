@@ -21,3 +21,11 @@
 .text-muted {
   color: var(--text-secondary);
 }
+
+@media (max-width: 768px) {
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

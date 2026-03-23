@@ -66,3 +66,27 @@ button {
 .btn-primary:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  label {
+    font-size: 11px;
+  }
+
+  input,
+  select {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  input,
+  select {
+    font-size: 14px;
+  }
+}

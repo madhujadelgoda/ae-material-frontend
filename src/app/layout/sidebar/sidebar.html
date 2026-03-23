@@ -1,8 +1,14 @@
-<nav class="sidebar">
+<nav
+  class="sidebar"
+  [class.collapsed]="collapsed"
+  [class.mobile-open]="mobileOpen && isMobileViewport"
+>
 
   <!-- BRAND -->
   <div class="sidebar-header">
-    <span class="brand-dot"></span>
+    <span class="brand-dot">
+      <span class="material-symbols-rounded brand-icon">inventory_2</span>
+    </span>
     <span class="brand-title">AE Material</span>
   </div>
 
@@ -15,9 +21,10 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">grid_view</span>
-      Dashboard
+      <span class="link-text">Dashboard</span>
     </a>
 
     <a
@@ -25,9 +32,10 @@
       routerLink="/admin/locators"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">map</span>
-      Locator Overview
+      <span class="link-text">Locator Overview</span>
     </a>
 
     <a
@@ -36,9 +44,10 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">pin_drop</span>
-      My Locator
+      <span class="link-text">My Locator</span>
     </a>
 
     <a
@@ -47,9 +56,10 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">inventory_2</span>
-      Assign Materials
+      <span class="link-text">Assign Materials</span>
     </a>
 
     <a
@@ -58,9 +68,10 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">assignment_return</span>
-      Return Materials
+      <span class="link-text">Return Materials</span>
     </a>
 
     <a
@@ -69,9 +80,10 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">dynamic_feed</span>
-      Bulk Allocation
+      <span class="link-text">Bulk Allocation</span>
     </a>
   </div>
 
@@ -84,9 +96,10 @@
       routerLink="/admin/users"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">group</span>
-      Users
+      <span class="link-text">Users</span>
     </a>
 
     <a
@@ -94,9 +107,10 @@
       routerLink="/admin/roles"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">manage_accounts</span>
-      Roles
+      <span class="link-text">Roles</span>
     </a>
 
     <a
@@ -104,9 +118,10 @@
       routerLink="/admin/permissions"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">lock</span>
-      Permissions
+      <span class="link-text">Permissions</span>
     </a>
 
     <a
@@ -114,9 +129,10 @@
       routerLink="/admin/role-permissions"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">vpn_key</span>
-      Role Permissions
+      <span class="link-text">Role Permissions</span>
     </a>
   </div>
 
@@ -129,9 +145,10 @@
       routerLink="/admin/audit"
       routerLinkActive="active"
       class="sidebar-link"
+      (click)="onNavigate()"
     >
       <span class="material-symbols-rounded sidebar-icon">history</span>
-      Audit Logs
+      <span class="link-text">Audit Logs</span>
     </a>
   </div>
 
@@ -142,13 +159,15 @@
         {{ username.charAt(0) | uppercase }}
       </div>
 
-      <div>
+      <div class="user-meta">
         <div class="user-name">{{ username }}</div>
         <button
+          type="button"
           class="logout-btn"
           (click)="confirmLogout()"
         >
-          Logout
+          <span class="material-symbols-rounded logout-icon">logout</span>
+          <span class="logout-label">Logout</span>
         </button>
       </div>
     </div>
