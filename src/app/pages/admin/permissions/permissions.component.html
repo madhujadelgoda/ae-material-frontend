@@ -4,15 +4,21 @@
 
 <ng-container *hasPermission="'permission.create'">
 
-  <div class="card">
+  <div class="card permission-create-card">
 
-    <div class="card-header">
-      <h3>Create Permission</h3>
+    <div class="card-header permission-create-header">
+      <div class="page-title">
+        <span class="material-symbols-rounded page-title-icon">key</span>
+        <div>
+          <h3 style="margin: 0; font-size: 15px;">Create Permission</h3>
+          <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Define a permission key and description for access control</p>
+        </div>
+      </div>
     </div>
 
-    <div class="filters-row">
+    <div class="permission-create-grid">
 
-      <div class="form-group inline wide">
+      <div class="form-group permission-field-key">
         <label>Permission Key</label>
         <input
           class="input"
@@ -21,28 +27,37 @@
           [(ngModel)]="key"
         />
         <small class="hint">
-          Format: module.action
+          Format: module.action (lowercase recommended)
         </small>
       </div>
 
-      <div class="form-group inline wide">
+      <div class="form-group permission-field-desc">
         <label>Description</label>
         <input
           class="input"
           type="text"
-          placeholder="Short description"
+          placeholder="What this permission allows"
           [(ngModel)]="desc"
         />
       </div>
 
+      <div class="permission-preview" *ngIf="key.trim()">
+        <span class="permission-preview-label">Preview</span>
+        <code>{{ key.trim() }}</code>
+      </div>
+
     </div>
 
-    <button
-      class="btn primary"
-      (click)="create()"
-    >
-      Create Permission
-    </button>
+    <div class="permission-create-actions">
+      <button
+        class="btn primary"
+        (click)="create()"
+        [disabled]="!canCreatePermission || creating"
+      >
+        <span class="material-symbols-rounded btn-icon">add_circle</span>
+        {{ creating ? 'Creating...' : 'Create Permission' }}
+      </button>
+    </div>
 
   </div>
 
@@ -55,7 +70,13 @@
 <div class="card" style="margin-top: 20px">
 
   <div class="card-header flex-between">
-    <h3>Permissions</h3>
+    <div class="page-title">
+      <span class="material-symbols-rounded page-title-icon">admin_panel_settings</span>
+      <div>
+        <h3 style="margin: 0; font-size: 15px;">Permissions</h3>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Review and maintain all system permissions</p>
+      </div>
+    </div>
 
     <div class="actions">
       <span class="badge green">
@@ -70,7 +91,7 @@
       <tr>
         <th style="width: 35%">Permission Key</th>
         <th>Description</th>
-        <th style="width: 200px">Actions</th>
+        <th style="width: 160px">Actions</th>
       </tr>
     </thead>
 
@@ -80,7 +101,7 @@
 
         <!-- KEY -->
         <td>
-          <code>{{ p.permission_key }}</code>
+          <code class="permission-key-chip">{{ p.permission_key }}</code>
         </td>
 
         <!-- DESCRIPTION -->
@@ -113,22 +134,25 @@
 
           <!-- VIEW -->
           <ng-container *ngIf="editing?.permission_id !== p.permission_id">
+            <div class="btn-group">
+              <button
+                class="btn icon-btn"
+                (click)="startEdit(p)"
+                *hasPermission="'permission.update'"
+                title="Edit permission"
+              >
+                <span class="material-symbols-rounded">edit</span>
+              </button>
 
-            <button
-              class="btn small warn"
-              (click)="startEdit(p)"
-              *hasPermission="'permission.update'"
-            >
-              Edit
-            </button>
-
-            <button
-              class="btn danger small"
-              (click)="delete(p)"
-              *hasPermission="'permission.delete'"
-            >
-              Delete
-            </button>
+              <button
+                class="btn icon-btn danger"
+                (click)="delete(p)"
+                *hasPermission="'permission.delete'"
+                title="Delete permission"
+              >
+                <span class="material-symbols-rounded">delete</span>
+              </button>
+            </div>
 
           </ng-container>
 
@@ -138,15 +162,19 @@
             <button
               class="btn small primary"
               (click)="saveEdit()"
+              [disabled]="savingEdit"
               *hasPermission="'permission.update'"
             >
-              Save
+              <span class="material-symbols-rounded btn-icon">save</span>
+              {{ savingEdit ? 'Saving...' : 'Save' }}
             </button>
 
             <button
               class="btn small ghost"
+              [disabled]="savingEdit"
               (click)="cancelEdit()"
             >
+              <span class="material-symbols-rounded btn-icon">close</span>
               Cancel
             </button>
 

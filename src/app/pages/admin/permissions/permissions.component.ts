@@ -35,6 +35,8 @@ export class PermissionsComponent implements OnInit {
 
   loading = false;
   error = '';
+  creating = false;
+  savingEdit = false;
 
   constructor(
     private permService: AdminPermissionService
@@ -70,16 +72,23 @@ export class PermissionsComponent implements OnInit {
 
   create(): void {
 
-    if (!this.key.trim()) return;
+    if (!this.canCreatePermission || this.creating) return;
+
+    this.creating = true;
 
     this.permService
       .createPermission(this.key, this.desc)
-      .subscribe(() => {
-
-        this.key = '';
-        this.desc = '';
-
-        this.load();
+      .subscribe({
+        next: () => {
+          this.key = '';
+          this.desc = '';
+          this.creating = false;
+          this.load();
+        },
+        error: () => {
+          this.creating = false;
+          alert('Failed to create permission');
+        }
       });
   }
 
@@ -99,19 +108,30 @@ export class PermissionsComponent implements OnInit {
 
   saveEdit(): void {
 
-    if (!this.editing) return;
+    if (!this.editing || this.savingEdit) return;
+
+    this.savingEdit = true;
 
     this.permService
       .updatePermission(
         this.editing.permission_id,
         this.desc
       )
-      .subscribe(() => {
-
-        this.cancelEdit();
-        this.load();
-
+      .subscribe({
+        next: () => {
+          this.savingEdit = false;
+          this.cancelEdit();
+          this.load();
+        },
+        error: () => {
+          this.savingEdit = false;
+          alert('Failed to update permission');
+        }
       });
+  }
+
+  get canCreatePermission(): boolean {
+    return this.key.trim().length > 0;
   }
 
   /* ===========================
