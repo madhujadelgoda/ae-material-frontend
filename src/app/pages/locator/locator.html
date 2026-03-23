@@ -9,31 +9,6 @@
 
     <h3>Assigned Locator</h3>
 
-    <!-- TOPBAR LINKS -->
-    <div class="top-links">
-
-      <!-- Inventory tab -->
-      <a
-        routerLink="./"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="tab-link"
-      >
-        My Locator
-      </a>
-
-      <!-- Team allocations tab -->
-      <a
-        routerLink="team-allocations"
-        routerLinkActive="active"
-        class="tab-link"
-        *hasPermission="'material.view_team_allocations'"
-      >
-        Team Allocations
-      </a>
-
-    </div>
-
   </div>
 
   <!-- ASSIGNED LOCATOR DETAILS -->

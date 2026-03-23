@@ -1,12 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './sidebar/sidebar';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { HasPermissionDirective } from '../core/directives/has-permission.directive';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, BreadcrumbComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    SidebarComponent,
+    BreadcrumbComponent,
+    HasPermissionDirective
+  ],
   selector: 'app-layout',
   templateUrl: './layout.html'
 })
@@ -15,8 +24,12 @@ export class LayoutComponent {
   sidebarCollapsed = false;
   mobileSidebarOpen = false;
 
-  constructor() {
+  constructor(private router: Router) {
     this.syncViewportState();
+  }
+
+  get showLocatorTabs(): boolean {
+    return this.router.url.startsWith('/locator');
   }
 
   @HostListener('window:resize')

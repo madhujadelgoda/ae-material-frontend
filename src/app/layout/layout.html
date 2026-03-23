@@ -35,6 +35,28 @@
 
         <app-breadcrumb></app-breadcrumb>
       </div>
+
+      <div class="topbar-trailing" *ngIf="showLocatorTabs">
+        <div class="topbar-route-tabs">
+          <a
+            routerLink="/locator"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="topbar-tab-link"
+          >
+            My Locator
+          </a>
+
+          <a
+            routerLink="/locator/team-allocations"
+            routerLinkActive="active"
+            class="topbar-tab-link"
+            *hasPermission="'material.view_team_allocations'"
+          >
+            Team Allocations
+          </a>
+        </div>
+      </div>
     </header>
 
     <main class="page-content">
