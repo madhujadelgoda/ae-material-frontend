@@ -1100,3 +1100,113 @@ ng-select {
   gap: 10px;
   align-items: center;
 }
+
+.badge.blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.role-permissions-card {
+  border: 1px solid #e6edf7;
+}
+
+.role-permissions-card .role-select-row {
+  margin-bottom: 18px;
+}
+
+.role-permission-body .filter-row {
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.role-permission-stats {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.role-permissions-card .permission-container {
+  max-height: 52vh;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+  padding: 10px;
+}
+
+.role-permissions-card .permission-group {
+  margin-bottom: 12px;
+  border: 1px solid #e9edf4;
+  border-radius: 10px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.role-permissions-card .permission-group:last-child {
+  margin-bottom: 0;
+}
+
+.role-permissions-card .permission-group-header {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #dbe3ef;
+}
+
+.group-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-meta {
+  font-size: 11px;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.role-permissions-card .permission-item {
+  border: 1px solid transparent;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.role-permissions-card .permission-item.checked {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.permission-empty {
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.permission-empty .material-symbols-rounded {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.permission-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.role-permission-savebar {
+  border-top: 1px solid #e8edf5;
+  padding-top: 12px;
+}
+
+@media (max-width: 900px) {
+  .role-permission-body .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .role-permission-stats {
+    margin-top: 6px;
+  }
+}
