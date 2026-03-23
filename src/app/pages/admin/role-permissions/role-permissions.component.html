@@ -1,8 +1,14 @@
-<div class="card">
+<div class="card role-permissions-card">
 
   <!-- Header -->
   <div class="card-header flex-between">
-    <h3>Assign Permissions to Role</h3>
+    <div class="page-title">
+      <span class="material-symbols-rounded page-title-icon">shield_person</span>
+      <div>
+        <h3 style="margin: 0; font-size: 15px;">Role Permissions</h3>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Choose a role and manage access permissions quickly</p>
+      </div>
+    </div>
 
     <div class="header-actions">
 
@@ -12,6 +18,10 @@
         Role Selected
       </span>
 
+      <span class="badge gray">
+        {{ permissions.length }} Permissions
+      </span>
+
     </div>
   </div>
 
@@ -19,7 +29,7 @@
        ROLE SELECTOR BAR
   ====================== -->
 
-  <div class="filter-row">
+  <div class="filter-row role-select-row">
 
     <div class="filter-item">
 
@@ -40,6 +50,8 @@
 
       </ng-select>
 
+      <small class="hint">Select a role to load current permission mapping</small>
+
     </div>
 
   </div>
@@ -48,7 +60,7 @@
        PERMISSIONS
   ====================== -->
 
-  <div *ngIf="selectedRoleId">
+  <div *ngIf="selectedRoleId" class="role-permission-body">
 
     <!-- SEARCH BAR -->
     <div class="filter-row">
@@ -64,6 +76,13 @@
           [(ngModel)]="search"
         />
 
+        <small class="hint">Filter by key, e.g. users.create or material.assign</small>
+
+      </div>
+
+      <div class="role-permission-stats">
+        <span class="badge gray">{{ groupedPermissions.length }} Groups</span>
+        <span class="badge blue">{{ selectedPermissionIds.length }} Selected</span>
       </div>
 
     </div>
@@ -78,19 +97,24 @@
 
         <div class="permission-group-header">
 
-          <strong>{{ group[0] | uppercase }}</strong>
+          <div class="group-title-wrap">
+            <strong>{{ group[0] | uppercase }}</strong>
+            <span class="group-meta">{{ group[1].length }} items</span>
+          </div>
 
           <div class="group-actions">
 
             <button
               class="btn small ghost"
               (click)="selectAll(group[1])">
+              <span class="material-symbols-rounded btn-icon">done_all</span>
               Select All
             </button>
 
             <button
               class="btn small ghost"
               (click)="clearAll(group[1])">
+              <span class="material-symbols-rounded btn-icon">remove_done</span>
               Clear
             </button>
 
@@ -100,6 +124,7 @@
 
         <label
           class="permission-item"
+          [class.checked]="selectedPermissionIds.includes(p.permission_id)"
           *ngFor="let p of group[1]"
         >
 
@@ -115,19 +140,26 @@
 
       </div>
 
+      <div class="permission-empty" *ngIf="groupedPermissions.length === 0">
+        <span class="material-symbols-rounded">search_off</span>
+        <p>No permissions match your search.</p>
+      </div>
+
     </div>
 
     <!-- ACTION BAR -->
-    <div class="flex-between" style="margin-top:16px">
+    <div class="flex-between role-permission-savebar" style="margin-top:16px">
 
       <span class="muted">
-        {{ selectedPermissionIds.length }} selected
+        {{ selectedPermissionIds.length }} selected for this role
       </span>
 
       <button
         class="btn primary"
         (click)="save()"
         [disabled]="loading">
+
+        <span class="material-symbols-rounded btn-icon">save</span>
 
         {{ loading ? 'Saving…' : 'Save Changes' }}
 
