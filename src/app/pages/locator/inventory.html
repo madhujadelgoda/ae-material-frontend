@@ -1,17 +1,33 @@
-<div class="card" style="margin-top:16px;">
+<div class="card locator-module-card" style="margin-top:16px;">
 
-  <div class="card-header flex-between">
-    <h3>Locator Inventory</h3>
+  <div class="card-header flex-between locator-module-header">
+    <div class="locator-module-title-wrap">
+      <div class="locator-module-icon">
+        <span class="material-symbols-rounded">inventory_2</span>
+      </div>
+      <div>
+        <h3 class="locator-module-title">Locator Inventory</h3>
+      </div>
+    </div>
+
+    <span class="badge gray">{{ materials.length }} Items</span>
   </div>
 
   <!-- LOADING -->
-  <div *ngIf="loading" class="muted">
-    Loading inventory...
+  <div *ngIf="loading" class="locator-state muted">
+    <span class="material-symbols-rounded">progress_activity</span>
+    <span>Loading inventory...</span>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!loading && error" class="locator-state locator-state-error">
+    <span class="material-symbols-rounded">error</span>
+    <span>{{ error }}</span>
   </div>
 
   <!-- TABLE -->
   <table
-    *ngIf="!loading && materials.length"
+    *ngIf="!loading && !error && materials.length"
     class="table table--compact"
   >
 
@@ -98,7 +114,7 @@
 
   <!-- EMPTY OUTSIDE -->
   <div
-    *ngIf="!loading && !materials.length"
+    *ngIf="!loading && !error && !materials.length"
     class="muted"
   >
     No materials found in this locator.

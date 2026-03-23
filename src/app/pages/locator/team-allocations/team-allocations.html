@@ -1,14 +1,26 @@
-<div class="card">
+<div class="card locator-module-card" style="margin-top:16px;">
 
-  <div class="card-header flex-between">
-    <h3>Team Allocations</h3>
+  <div class="card-header flex-between locator-module-header">
+    <div class="locator-module-title-wrap">
+      <div class="locator-module-icon">
+        <span class="material-symbols-rounded">groups</span>
+      </div>
+      <div>
+        <h3 class="locator-module-title">Team Allocations</h3>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <span class="badge gray">{{ teams.length }} Teams</span>
+      <span class="badge blue">{{ filteredRows.length }} Rows</span>
+    </div>
   </div>
 
   <!-- ===========================
        TEAM FILTER
   ============================ -->
 
-  <div class="filters-row">
+  <div class="filters-row locator-filter-row">
 
     <div class="form-group inline">
       <label>Filter by Team</label>
@@ -27,6 +39,8 @@
         </option>
 
       </select>
+
+      <small class="hint">Quickly narrow allocations by team</small>
     </div>
 
   </div>
@@ -35,16 +49,18 @@
        LOADING
   ============================ -->
 
-  <div *ngIf="loading" class="muted">
-    Loading team allocations...
+  <div *ngIf="loading" class="locator-state muted">
+    <span class="material-symbols-rounded">progress_activity</span>
+    <span>Loading team allocations...</span>
   </div>
 
   <!-- ===========================
        ERROR
   ============================ -->
 
-  <div *ngIf="error" class="error">
-    {{ error }}
+  <div *ngIf="error" class="locator-state locator-state-error">
+    <span class="material-symbols-rounded">error</span>
+    <span>{{ error }}</span>
   </div>
 
   <!-- ===========================
