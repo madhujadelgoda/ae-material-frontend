@@ -1102,6 +1102,149 @@ ng-select {
   align-items: center;
 }
 
+.locator-summary-card {
+  border: 1px solid #e6edf7;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.locator-summary-header {
+  margin-bottom: 12px;
+}
+
+.locator-summary-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.locator-summary-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(150deg, #e0f2fe 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  flex-shrink: 0;
+}
+
+.locator-summary-icon .material-symbols-rounded {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+.locator-summary-title {
+  margin: 0;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.locator-summary-subtitle {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.locator-summary-body {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr);
+  gap: 10px;
+}
+
+.locator-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.locator-info-item label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.locator-code-chip {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 11px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.locator-code-chip .material-symbols-rounded {
+  font-size: 16px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+.locator-code-chip strong {
+  letter-spacing: 0.03em;
+}
+
+.locator-state {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.locator-state .material-symbols-rounded {
+  font-size: 18px;
+}
+
+.locator-state-error {
+  color: #b91c1c;
+}
+
+.locator-module-card {
+  border: 1px solid #e6edf7;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.locator-module-header {
+  margin-bottom: 12px;
+}
+
+.locator-module-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.locator-module-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(150deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  flex-shrink: 0;
+}
+
+.locator-module-icon .material-symbols-rounded {
+  font-size: 18px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+.locator-module-title {
+  margin: 0;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.locator-filter-row {
+  margin-bottom: 14px;
+}
+
 .badge.blue {
   background: #dbeafe;
   color: #1d4ed8;
