@@ -97,7 +97,7 @@
 
     <tbody>
 
-      <tr *ngFor="let p of permissions">
+      <tr *ngFor="let p of paginatedPermissions">
 
         <!-- KEY -->
         <td>
@@ -197,5 +197,57 @@
     </tbody>
 
   </table>
+
+  <div class="table-pagination" *ngIf="permissions.length > 0">
+    <div class="table-pagination-left">
+      <span class="table-pagination-label">Rows per page</span>
+      <select
+        class="table-pagination-size"
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChange($event)"
+      >
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="50">50</option>
+      </select>
+
+      <span class="table-pagination-meta">
+        Showing {{ startItem }}-{{ endItem }} of {{ permissions.length }}
+      </span>
+    </div>
+
+    <div class="table-pagination-right">
+      <button
+        type="button"
+        class="btn ghost small"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        <span class="material-symbols-rounded btn-icon">chevron_left</span>
+        Prev
+      </button>
+
+      <button
+        type="button"
+        class="table-page-btn"
+        *ngFor="let page of visiblePages"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        type="button"
+        class="btn ghost small"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Next
+        <span class="material-symbols-rounded btn-icon">chevron_right</span>
+      </button>
+    </div>
+  </div>
 
 </div>
