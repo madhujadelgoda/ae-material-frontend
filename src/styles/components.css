@@ -987,6 +987,65 @@ ng-select {
   letter-spacing: 0.02em;
 }
 
+.table-pagination {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e6edf6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.table-pagination-left,
+.table-pagination-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-pagination-label,
+.table-pagination-meta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.table-pagination-size {
+  border: 1px solid #d1d9e6;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.table-page-btn {
+  min-width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #d7dfeb;
+  background: #ffffff;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.table-page-btn:hover {
+  background: #f8fbff;
+  border-color: #bfd4ff;
+  color: #1d4ed8;
+}
+
+.table-page-btn.active {
+  background: #eaf2ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
 @media (max-width: 900px) {
   .permission-create-grid {
     grid-template-columns: 1fr;
@@ -1003,6 +1062,16 @@ ng-select {
   .permission-create-actions .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .table-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-pagination-left,
+  .table-pagination-right {
+    justify-content: space-between;
   }
 }
 
