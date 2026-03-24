@@ -4,15 +4,13 @@ import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
-import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   standalone: true,
   selector: 'app-locator',
   imports: [
     CommonModule,
-    RouterModule,          
-    HasPermissionDirective 
+    RouterModule
   ],
   templateUrl: './locator.html'
 })
