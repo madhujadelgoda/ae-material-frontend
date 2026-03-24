@@ -32,6 +32,10 @@ export class LayoutComponent {
     return this.router.url.startsWith('/locator');
   }
 
+  get showAuditTabs(): boolean {
+    return this.router.url.startsWith('/admin/audit');
+  }
+
   @HostListener('window:resize')
   onWindowResize(): void {
     this.syncViewportState();
