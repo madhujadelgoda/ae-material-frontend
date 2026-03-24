@@ -57,6 +57,26 @@
           </a>
         </div>
       </div>
+
+      <div class="topbar-trailing" *ngIf="showAuditTabs">
+        <div class="topbar-route-tabs">
+          <a
+            routerLink="/admin/audit/operations"
+            routerLinkActive="active"
+            class="topbar-tab-link"
+          >
+            Operations
+          </a>
+
+          <a
+            routerLink="/admin/audit/security"
+            routerLinkActive="active"
+            class="topbar-tab-link"
+          >
+            Security
+          </a>
+        </div>
+      </div>
     </header>
 
     <main class="page-content">
