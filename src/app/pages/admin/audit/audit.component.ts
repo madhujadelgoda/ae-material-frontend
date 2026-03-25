@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,9 +7,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-audit',
   imports: [
     CommonModule,
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive
+    RouterOutlet
   ],
   templateUrl: './audit.component.html'
 })
