@@ -1,46 +1,88 @@
-<div class="card">
-  <div class="card-header">
-    <h3>Security Audit</h3>
+<div class="card audit-security-card">
+  <div class="card-header flex-between">
+    <div class="page-title">
+      <span class="material-symbols-rounded page-title-icon">admin_panel_settings</span>
+      <div>
+        <h3 style="margin: 0; font-size: 15px;">Security Audit</h3>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Review auth and security-sensitive events across the system</p>
+      </div>
+    </div>
+
+    <span class="badge gray">{{ audits.length }} Records</span>
   </div>
 
-  <table class="table table--compact">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Action</th>
-        <th>Entity</th>
-        <th>Description</th>
-        <th>By</th>
-        <th>Role</th>
-        <th>IP</th>
-      </tr>
-    </thead>
+  <div class="audit-table-wrap">
+    <table class="table table--compact">
+      <thead>
+        <tr>
+          <th style="width: 18%">Date</th>
+          <th style="width: 14%">Action</th>
+          <th style="width: 13%">Entity</th>
+          <th>Description</th>
+          <th style="width: 20%">Performed By</th>
+          <th style="width: 13%">IP Address</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <tr *ngFor="let a of audits">
-        <td>{{ a.created_at | date:'short' }}</td>
-        <td>{{ a.action }}</td>
-        <td>{{ a.entity_type }}</td>
-        <td>{{ a.description }}</td>
-        <td>{{ a.performed_by }}</td>
-        <td>{{ a.performed_role }}</td>
-        <td>{{ a.ip_address }}</td>
-      </tr>
+      <tbody>
+        <tr *ngIf="loading">
+          <td colspan="6" class="audit-empty-cell">
+            Loading security records...
+          </td>
+        </tr>
 
-      <tr *ngIf="!audits.length">
-        <td colspan="7" class="text-center muted">
-          No security audit records
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <tr *ngFor="let a of audits">
+          <td>
+            <div class="audit-date-cell">{{ a.created_at | date:'medium' }}</div>
+          </td>
 
-  <div class="pagination">
-    <button class="btn" (click)="prevPage()" [disabled]="offset === 0">
-      Previous
-    </button>
-    <button class="btn" (click)="nextPage()" [disabled]="audits.length < limit">
-      Next
-    </button>
+          <td>
+            <span class="badge audit-action-badge gray">
+              {{ a.action || 'UNKNOWN' }}
+            </span>
+          </td>
+
+          <td>
+            <code class="audit-code-chip">{{ a.entity_type || '-' }}</code>
+          </td>
+
+          <td>{{ a.description || '-' }}</td>
+
+          <td>
+            <div class="audit-performer-name">{{ a.performed_by || '-' }}</div>
+            <div class="audit-performer-role">{{ a.performed_role || '-' }}</div>
+          </td>
+
+          <td>
+            <span class="audit-ip-chip">{{ a.ip_address || '-' }}</span>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && !audits.length">
+          <td colspan="6" class="audit-empty-cell">
+            No security audit records
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="audit-pagination">
+    <div class="audit-pagination-meta">
+      Page {{ currentPage }}
+      <span *ngIf="audits.length > 0">• Showing {{ currentRangeStart }}-{{ currentRangeEnd }}</span>
+    </div>
+
+    <div class="audit-pagination-actions">
+      <button class="btn ghost small" (click)="prevPage()" [disabled]="!hasPrev || loading">
+        <span class="material-symbols-rounded btn-icon">chevron_left</span>
+        Previous
+      </button>
+
+      <button class="btn ghost small" (click)="nextPage()" [disabled]="!hasNext || loading">
+        Next
+        <span class="material-symbols-rounded btn-icon">chevron_right</span>
+      </button>
+    </div>
   </div>
 </div>
