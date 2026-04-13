@@ -15,6 +15,44 @@ import { StorageService } from '../../core/services/storage.service';
   templateUrl: './dashboard.html'
 })
 export class DashboardComponent implements OnInit {
+  statCards = [
+    {
+      key: 'totalMaterials',
+      label: 'Total Materials',
+      icon: 'inventory_2',
+      color: 'blue'
+    },
+    {
+      key: 'totalTeams',
+      label: 'Total Teams',
+      icon: 'groups',
+      color: 'purple'
+    },
+    {
+      key: 'totalAllocations',
+      label: 'Total Allocations',
+      icon: 'receipt_long',
+      color: 'indigo'
+    },
+    {
+      key: 'activeAllocations',
+      label: 'Active Allocations',
+      icon: 'task_alt',
+      color: 'green'
+    },
+    {
+      key: 'returnedToday',
+      label: 'Returned Today',
+      icon: 'assignment_return',
+      color: 'orange'
+    },
+    {
+      key: 'todayAllocations',
+      label: 'Allocated Today',
+      icon: 'calendar_today',
+      color: 'teal'
+    }
+  ];
 
   summary: DashboardSummary = {
     totalMaterials: 0,
@@ -66,5 +104,17 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  getStatValue(key: string): number {
+    switch (key) {
+      case 'totalMaterials': return this.summary.totalMaterials;
+      case 'totalTeams': return this.summary.totalTeams;
+      case 'totalAllocations': return this.summary.totalAllocations;
+      case 'activeAllocations': return this.summary.activeAllocations;
+      case 'returnedToday': return this.summary.returnedToday;
+      case 'todayAllocations': return this.summary.todayAllocations;
+      default: return 0;
+    }
   }
 }
