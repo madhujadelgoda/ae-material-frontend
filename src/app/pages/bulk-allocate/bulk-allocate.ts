@@ -26,6 +26,18 @@ interface BulkItem {
   templateUrl: './bulk-allocate.html'
 })
 export class BulkAllocateComponent implements OnInit {
+  trackByRowIndex(index: number, _row: BulkItem): number {
+    return index;
+  }
+
+  getMaterialRemaining(materialCode: string | null, rowIndex: number): number {
+    return this.remainingForRow(materialCode, rowIndex);
+  }
+
+  getMaterialRemainingLabel(materialCode: string | null, rowIndex: number): string {
+    const remaining = this.getMaterialRemaining(materialCode, rowIndex);
+    return remaining.toString();
+  }
 
   teams: any[] = [];
   materials: any[] = [];
