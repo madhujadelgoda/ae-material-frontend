@@ -9,6 +9,15 @@ import { environment } from '../../../environments/environment';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { StorageService } from '../../core/services/storage.service';
 
+interface Allocation {
+  allocation_id: number;
+  team_name: string;
+  material_code: string;
+  allocated_quantity: number;
+  returned_quantity: number;
+  status: string;
+}
+
 @Component({
   standalone: true,
   selector: 'app-return-material',
@@ -22,7 +31,7 @@ import { StorageService } from '../../core/services/storage.service';
 })
 export class ReturnMaterialComponent implements OnInit {
 
-  allocations: any[] = [];
+  allocations: Allocation[] = [];
 
   usedQty: Record<number, number> = {};
   damagedQty: Record<number, number> = {};
@@ -72,7 +81,7 @@ export class ReturnMaterialComponent implements OnInit {
   loadAllocations(): void {
 
     this.http
-      .get<any[]>(`${environment.apiUrl}/materials/allocations`)
+      .get<Allocation[]>(`${environment.apiUrl}/materials/allocations`)
       .subscribe({
         next: data => {
           this.allocations = data;
@@ -90,15 +99,45 @@ export class ReturnMaterialComponent implements OnInit {
   // LOCKED?
   // ============================
 
-  isLocked(a: any): boolean {
+  isLocked(a: Allocation): boolean {
     return a.status === 'RETURNED';
+  }
+
+  trackByAllocationId(_: number, a: Allocation): number {
+    return a.allocation_id;
+  }
+
+  getUsed(a: Allocation): number {
+    return this.usedQty[a.allocation_id] || 0;
+  }
+
+  getDamaged(a: Allocation): number {
+    return this.damagedQty[a.allocation_id] || 0;
+  }
+
+  getReturnedDisplay(a: Allocation): number | string {
+    const returned = this.returnedQty(a);
+    return returned === null ? '—' : returned;
+  }
+
+  isSubmitDisabled(a: Allocation): boolean {
+    return (
+      this.loading ||
+      this.isLocked(a) ||
+      !this.canReturn ||
+      (this.getUsed(a) <= 0)
+    );
+  }
+
+  getSubmitLabel(a: Allocation): string {
+    return this.isLocked(a) ? 'Completed' : 'Confirm & Return';
   }
 
   // ============================
   // RETURN PREVIEW
   // ============================
 
-  returnedQty(a: any): number | null {
+  returnedQty(a: Allocation): number | null {
 
     // backend truth
     if (this.isLocked(a)) {
@@ -121,7 +160,7 @@ export class ReturnMaterialComponent implements OnInit {
   // SUBMIT
   // ============================
 
-  submitUsageAndReturn(a: any): void {
+  submitUsageAndReturn(a: Allocation): void {
 
     if (!this.canReturn) return;
     if (this.isLocked(a) || this.loading) return;
