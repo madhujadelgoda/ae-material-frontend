@@ -41,7 +41,7 @@
 
     <tbody>
 
-      <tr *ngFor="let row of rows; let i = index">
+      <tr *ngFor="let row of rows; let i = index; trackBy: trackByRowIndex">
 
         <!-- Material -->
         <td>
@@ -52,20 +52,18 @@
             placeholder="Search material..."
             [(ngModel)]="row.material_code"
             [clearable]="true">
-
             <ng-template ng-option-tmp let-item="item">
               {{ item.material_name }}
-              — {{ remainingForRow(item.erp_code, i) }}
+              — {{ getMaterialRemainingLabel(item.erp_code, i) }}
               {{ item.erp_uom }}
             </ng-template>
-
           </ng-select>
         </td>
 
         <!-- Available -->
         <td>
           <span class="badge green">
-            {{ remainingForRow(row.material_code, i) }}
+            {{ getMaterialRemainingLabel(row.material_code, i) }}
           </span>
         </td>
 
@@ -75,7 +73,7 @@
             class="qty-input"
             type="number"
             min="1"
-            [max]="remainingForRow(row.material_code, i)"
+            [max]="getMaterialRemaining(row.material_code, i)"
             [(ngModel)]="row.quantity"
             [disabled]="!row.material_code"
           />
