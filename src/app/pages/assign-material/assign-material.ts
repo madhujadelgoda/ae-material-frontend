@@ -35,7 +35,6 @@ export class AssignMaterialComponent implements OnInit {
   success = '';
   error = '';
 
-  /** permission flag */
   canAssign = false;
 
   constructor(
@@ -52,9 +51,9 @@ export class AssignMaterialComponent implements OnInit {
     this.loadLocator();
   }
 
-  // -------------------------
+  // ------------------------
   // Load teams
-  // -------------------------
+  // ------------------------
   loadTeams() {
     this.http.get<any[]>(`${environment.apiUrl}/teams`).subscribe({
       next: data => (this.teams = data),
@@ -62,9 +61,9 @@ export class AssignMaterialComponent implements OnInit {
     });
   }
 
-  // -------------------------
+  // ------------------------
   // Load locator
-  // -------------------------
+  // ------------------------
   loadLocator() {
     this.http.get(`${environment.apiUrl}/erp/locator`).subscribe({
       next: data => (this.locator = data),
@@ -72,9 +71,9 @@ export class AssignMaterialComponent implements OnInit {
     });
   }
 
-  // -------------------------
+  // ------------------------
   // When team changes
-  // -------------------------
+  // ------------------------
   onTeamSelected() {
 
     if (!this.canAssign) return;
@@ -93,9 +92,9 @@ export class AssignMaterialComponent implements OnInit {
     });
   }
 
-  // -------------------------
+  // ------------------------
   // Submit allocation
-  // -------------------------
+  // ------------------------
   submit() {
 
     if (!this.canAssign) return;
@@ -119,9 +118,7 @@ export class AssignMaterialComponent implements OnInit {
     }
 
     if (this.quantity > this.selectedMaterial.remaining_quantity) {
-      this.error =
-        `Only ${this.selectedMaterial.remaining_quantity}
-         ${this.selectedMaterial.erp_uom} available`;
+      this.error = `Only ${this.selectedMaterial.remaining_quantity} ${this.selectedMaterial.erp_uom} available`;
       return;
     }
 
