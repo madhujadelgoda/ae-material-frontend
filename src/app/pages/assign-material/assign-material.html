@@ -1,133 +1,90 @@
 <div class="card">
 
-  <!-- <div class="card-header flex-between">
-    <h3>Assign Materials</h3>
-  </div> -->
-
-  <!-- Locator info -->
-  <!-- <div *ngIf="locator" class="hint" style="margin-bottom: 14px;">
-    <strong>Locator:</strong>
-    {{ locator.locator_code }} ({{ locator.locator_id }})
-  </div> -->
-
-
   <!-- Header -->
   <div class="card-header flex-between">
     <h3>Assign Materials</h3>
 
-    <span class="badge green" *ngIf="locator">
-      {{ locator.locator_code }}
-    </span>
+    @if (locator) {
+      <span class="badge green">{{ locator.locator_code }}</span>
+    }
   </div>
 
-  <!-- Error / Success -->
-  <div *ngIf="error" class="error">{{ error }}</div>
-  <div *ngIf="success" class="success">{{ success }}</div>
+  <!-- Form -->
+  <ng-container *hasPermission="'material.allocate'">
 
-  <div class="filters-row">
+    <div class="filters-row">
 
-    <!-- ======================
-         TEAM SELECT
-    ====================== -->
+      <!-- Team -->
+      <div class="form-group inline wide">
+        <label>Team</label>
+        <ng-select
+          [items]="teams"
+          bindLabel="team_name"
+          bindValue="team_id"
+          placeholder="Search team..."
+          [(ngModel)]="selectedTeamId"
+          (change)="onTeamSelected()"
+          [clearable]="true">
+        </ng-select>
+      </div>
 
-    <div class="form-group inline wide">
-      <label>Team</label>
+      <!-- Material -->
+      <div class="form-group inline wide">
+        <label>Material</label>
+        <ng-select
+          [items]="materials"
+          bindLabel="material_name"
+          placeholder="Search material..."
+          [(ngModel)]="selectedMaterial"
+          [disabled]="!selectedTeamId"
+          [clearable]="true">
+          <ng-template ng-option-tmp let-item="item">
+            {{ item.material_name }} — {{ item.remaining_quantity }} {{ item.erp_uom }}
+          </ng-template>
+        </ng-select>
+      </div>
 
-      <ng-select
-        *hasPermission="'material.allocate'"
-        [items]="teams"
-        bindLabel="team_name"
-        bindValue="team_id"
-        placeholder="Search team..."
-        [(ngModel)]="selectedTeamId"
-        (change)="onTeamSelected()"
-        [clearable]="true">
-      </ng-select>
+      <!-- Quantity -->
+      <div class="form-group inline">
+        <label>Quantity</label>
+        <input
+          type="number"
+          [(ngModel)]="quantity"
+          min="1"
+          [max]="selectedMaterial?.remaining_quantity"
+          [disabled]="!selectedMaterial"
+          placeholder="Qty"
+        />
+      </div>
 
-      <small
-        *ngIf="!canAssign"
-        class="muted">
-        You do not have permission to assign materials
-      </small>
-    </div>
-
-    <!-- ======================
-         MATERIAL
-    ====================== -->
-
-    <div class="form-group inline wide">
-
-      <label>Material</label>
-
-      <ng-select
-        *hasPermission="'material.allocate'"
-        [items]="materials"
-        bindLabel="material_name"
-        placeholder="Search material..."
-        [(ngModel)]="selectedMaterial"
-        [disabled]="!selectedTeamId"
-        [clearable]="true">
-
-        <ng-template ng-option-tmp let-item="item">
-          {{ item.material_name }}
-          — {{ item.remaining_quantity }} {{ item.erp_uom }}
-        </ng-template>
-
-      </ng-select>
-
-    </div>
-
-    <!-- ======================
-         QUANTITY
-    ====================== -->
-
-    <div
-      class="form-group inline"
-      *hasPermission="'material.allocate'"
-    >
-      <label>Quantity</label>
-
-      <input
-        type="number"
-        [(ngModel)]="quantity"
-        min="1"
-        [max]="selectedMaterial?.remaining_quantity"
-        [disabled]="!selectedMaterial"
-        placeholder="Qty"
-      />
-    </div>
-
-    <!-- ======================
-         ACTION
-    ====================== -->
-
-    <div
-      class="form-group inline"
-      style="align-self: flex-end;"
-      *hasPermission="'material.allocate'"
-    >
-
-      <button
-        class="btn primary"
-        (click)="submit()"
-        [disabled]="loading || !selectedTeamId"
-      >
-        {{ loading ? 'Assigning…' : 'Assign Material' }}
-      </button>
+      <!-- Action -->
+      <div class="form-group inline" style="align-self: flex-end;">
+        <button
+          class="btn primary"
+          (click)="submit()"
+          [disabled]="loading || !selectedTeamId">
+          {{ loading ? 'Assigning…' : 'Assign Material' }}
+        </button>
+      </div>
 
     </div>
 
-  </div>
+    <!-- Remaining stock badge -->
+    @if (selectedMaterial) {
+      <div class="badge green mt-md">
+        Remaining: {{ selectedMaterial.remaining_quantity }} {{ selectedMaterial.erp_uom }}
+      </div>
+    }
 
-  <!-- Remaining -->
-  <div
-    *ngIf="selectedMaterial"
-    class="badge green"
-    style="margin-top: 16px;"
-  >
-    Remaining:
-    {{ selectedMaterial.remaining_quantity }}
-    {{ selectedMaterial.erp_uom }}
-  </div>
+  </ng-container>
+
+  <!-- No-permission notice -->
+  @if (!canAssign) {
+    <small class="muted">You do not have permission to assign materials</small>
+  }
+
+  <!-- Feedback -->
+  @if (success) { <p class="success">{{ success }}</p> }
+  @if (error)   { <p class="error">{{ error }}</p> }
 
 </div>
