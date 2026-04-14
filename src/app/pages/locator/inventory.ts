@@ -4,6 +4,21 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
 
+interface InventoryItem {
+  erp_code: string;
+  material_name: string;
+  material_subcategory: string;
+  erp_description: string;
+  erp_uom: string;
+  measurement_code: string;
+  stock_assigned: number;
+  allocated_to_teams: number;
+  used_qty: number;
+  damaged_qty: number;
+  returned_qty: number;
+  available_now: number;
+}
+
 @Component({
   standalone: true,
   selector: 'app-locator-inventory',
@@ -12,7 +27,7 @@ import { environment } from '../../../environments/environment';
 })
 export class LocatorInventoryComponent implements OnInit {
 
-  materials: any[] = [];
+  materials: InventoryItem[] = [];
 
   loading = false;
   error: string | null = null;
@@ -20,16 +35,20 @@ export class LocatorInventoryComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadMaterials();
+    this.load();
   }
 
-  loadMaterials(): void {
+  // ==============================
+  // LOAD LOCATOR INVENTORY
+  // ==============================
+
+  load(): void {
 
     this.loading = true;
     this.error = null;
 
     this.http
-      .get<any[]>(`${environment.apiUrl}/materials/locator-inventory`)
+      .get<InventoryItem[]>(`${environment.apiUrl}/materials/locator-inventory`)
       .subscribe({
         next: data => {
           this.materials = data;
