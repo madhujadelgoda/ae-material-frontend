@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { AdminPermissionService } from '../../../core/services/admin-permission.service';
 import { HasPermissionDirective } from '../../../core/directives/has-permission.directive';
@@ -10,6 +11,11 @@ interface PermissionRow {
   permission_id: number;
   permission_key: string;
   description: string | null;
+}
+
+interface PermissionFeedback {
+  type: 'success' | 'error';
+  message: string;
 }
 
 @Component({
@@ -27,16 +33,17 @@ export class PermissionsComponent implements OnInit {
 
   permissions: PermissionRow[] = [];
 
-  // create / edit
-  key = '';
-  desc = '';
-
-  editing: PermissionRow | null = null;
+  createKey = '';
+  createDescription = '';
+  editPermissionId: number | null = null;
+  editDescription = '';
 
   loading = false;
   error = '';
+  feedback: PermissionFeedback | null = null;
   creating = false;
   savingEdit = false;
+  deletingPermissionId: number | null = null;
   currentPage = 1;
   pageSize = 10;
 
@@ -53,20 +60,29 @@ export class PermissionsComponent implements OnInit {
   ============================ */
 
   load(): void {
-
+    this.error = '';
     this.loading = true;
 
-    this.permService.getPermissions().subscribe({
-      next: data => {
-        this.permissions = data;
-        this.ensureValidPage();
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load permissions';
-        this.loading = false;
-      }
-    });
+    this.permService
+      .getPermissions()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: data => {
+          this.permissions = data;
+
+          if (
+            this.editPermissionId !== null &&
+            !data.some(permission => permission.permission_id === this.editPermissionId)
+          ) {
+            this.cancelEdit();
+          }
+
+          this.ensureValidPage();
+        },
+        error: error => {
+          this.error = this.getErrorMessage(error, 'Failed to load permissions');
+        }
+      });
   }
 
   /* ===========================
@@ -74,23 +90,22 @@ export class PermissionsComponent implements OnInit {
   ============================ */
 
   create(): void {
-
     if (!this.canCreatePermission || this.creating) return;
 
+    this.clearFeedback();
     this.creating = true;
 
     this.permService
-      .createPermission(this.key, this.desc)
+      .createPermission(this.normalizedCreateKey, this.normalizedCreateDescription)
+      .pipe(finalize(() => this.creating = false))
       .subscribe({
         next: () => {
-          this.key = '';
-          this.desc = '';
-          this.creating = false;
+          this.resetCreateForm();
+          this.setFeedback('success', 'Permission created successfully');
           this.load();
         },
-        error: () => {
-          this.creating = false;
-          alert('Failed to create permission');
+        error: error => {
+          this.setFeedback('error', this.getErrorMessage(error, 'Failed to create permission'));
         }
       });
   }
@@ -100,41 +115,57 @@ export class PermissionsComponent implements OnInit {
   ============================ */
 
   startEdit(p: PermissionRow): void {
-    this.editing = p;
-    this.desc = p.description || '';
+    this.clearFeedback();
+    this.editPermissionId = p.permission_id;
+    this.editDescription = p.description ?? '';
   }
 
   cancelEdit(): void {
-    this.editing = null;
-    this.desc = '';
+    this.editPermissionId = null;
+    this.editDescription = '';
   }
 
   saveEdit(): void {
+    if (this.editPermissionId === null || this.savingEdit || !this.hasEditChanges) return;
 
-    if (!this.editing || this.savingEdit) return;
+    const permissionId = this.editPermissionId;
+    const description = this.normalizedEditDescription;
 
+    this.clearFeedback();
     this.savingEdit = true;
 
     this.permService
-      .updatePermission(
-        this.editing.permission_id,
-        this.desc
-      )
+      .updatePermission(permissionId, description)
+      .pipe(finalize(() => this.savingEdit = false))
       .subscribe({
         next: () => {
-          this.savingEdit = false;
+          this.permissions = this.permissions.map(permission =>
+            permission.permission_id === permissionId
+              ? { ...permission, description }
+              : permission
+          );
+
           this.cancelEdit();
-          this.load();
+          this.setFeedback('success', 'Permission updated successfully');
         },
-        error: () => {
-          this.savingEdit = false;
-          alert('Failed to update permission');
+        error: error => {
+          this.setFeedback('error', this.getErrorMessage(error, 'Failed to update permission'));
         }
       });
   }
 
   get canCreatePermission(): boolean {
-    return this.key.trim().length > 0;
+    return this.normalizedCreateKey.length > 0;
+  }
+
+  get hasEditChanges(): boolean {
+    const permission = this.editingPermission;
+
+    if (!permission) {
+      return false;
+    }
+
+    return (permission.description ?? '') !== this.normalizedEditDescription;
   }
 
   /* ===========================
@@ -142,12 +173,54 @@ export class PermissionsComponent implements OnInit {
   ============================ */
 
   delete(p: PermissionRow): void {
-
+    if (this.deletingPermissionId !== null) return;
     if (!confirm(`Delete permission ${p.permission_key}?`)) return;
+
+    this.clearFeedback();
+    this.deletingPermissionId = p.permission_id;
 
     this.permService
       .deletePermission(p.permission_id)
-      .subscribe(() => this.load());
+      .pipe(finalize(() => this.deletingPermissionId = null))
+      .subscribe({
+        next: () => {
+          this.permissions = this.permissions.filter(
+            permission => permission.permission_id !== p.permission_id
+          );
+
+          if (this.editPermissionId === p.permission_id) {
+            this.cancelEdit();
+          }
+
+          this.ensureValidPage();
+          this.setFeedback('success', 'Permission deleted successfully');
+        },
+        error: error => {
+          this.setFeedback('error', this.getErrorMessage(error, 'Failed to delete permission'));
+        }
+      });
+  }
+
+  get editingPermission(): PermissionRow | null {
+    if (this.editPermissionId === null) {
+      return null;
+    }
+
+    return this.permissions.find(
+      permission => permission.permission_id === this.editPermissionId
+    ) ?? null;
+  }
+
+  get normalizedCreateKey(): string {
+    return this.createKey.trim().toLowerCase();
+  }
+
+  get normalizedCreateDescription(): string {
+    return this.normalizeText(this.createDescription);
+  }
+
+  get normalizedEditDescription(): string {
+    return this.normalizeText(this.editDescription);
   }
 
   get totalPages(): number {
@@ -197,6 +270,35 @@ export class PermissionsComponent implements OnInit {
     this.pageSize = Number(size) || 10;
     this.currentPage = 1;
     this.ensureValidPage();
+  }
+
+  isEditing(permission: PermissionRow): boolean {
+    return this.editPermissionId === permission.permission_id;
+  }
+
+  trackByPermissionId(_: number, permission: PermissionRow): number {
+    return permission.permission_id;
+  }
+
+  private resetCreateForm(): void {
+    this.createKey = '';
+    this.createDescription = '';
+  }
+
+  private clearFeedback(): void {
+    this.feedback = null;
+  }
+
+  private setFeedback(type: PermissionFeedback['type'], message: string): void {
+    this.feedback = { type, message };
+  }
+
+  private normalizeText(value: string): string {
+    return value.trim();
+  }
+
+  private getErrorMessage(error: any, fallback: string): string {
+    return error?.error?.detail || error?.error?.message || fallback;
   }
 
   private ensureValidPage(): void {
