@@ -36,9 +36,9 @@ export class LocatorOverviewComponent implements OnInit {
     this.loadLocators();
   }
 
-  /* ===============================
-     LOAD LOCATORS
-  ================================ */
+  // ------------------------
+  // Load locators
+  // ------------------------
 
   loadLocators() {
     this.loadingLocators = true;
@@ -55,27 +55,23 @@ export class LocatorOverviewComponent implements OnInit {
     });
   }
 
-  /* ===============================
-     SELECT LOCATOR
-  ================================ */
+  // ------------------------
+  // Select locator
+  // ------------------------
 
   selectLocator(locatorId: number) {
-
     this.selectedLocatorId = locatorId;
-
     this.details = null;
     this.filteredTeamRows = [];
     this.selectedTeamId = null;
-
     this.loadDetails();
   }
 
-  /* ===============================
-     LOAD DETAILS
-  ================================ */
+  // ------------------------
+  // Load details
+  // ------------------------
 
   loadDetails() {
-
     if (!this.selectedLocatorId) return;
 
     this.loadingDetails = true;
@@ -94,12 +90,11 @@ export class LocatorOverviewComponent implements OnInit {
       });
   }
 
-  /* ===============================
-     SELECT TEAM
-  ================================ */
+  // ------------------------
+  // Select team
+  // ------------------------
 
   selectTeam(teamId: number) {
-
     this.selectedTeamId = teamId;
 
     this.filteredTeamRows =
