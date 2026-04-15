@@ -24,7 +24,7 @@
           class="input"
           type="text"
           placeholder="e.g. material.allocate"
-          [(ngModel)]="key"
+          [(ngModel)]="createKey"
         />
         <small class="hint">
           Format: module.action (lowercase recommended)
@@ -37,13 +37,13 @@
           class="input"
           type="text"
           placeholder="What this permission allows"
-          [(ngModel)]="desc"
+          [(ngModel)]="createDescription"
         />
       </div>
 
-      <div class="permission-preview" *ngIf="key.trim()">
+      <div class="permission-preview" *ngIf="normalizedCreateKey">
         <span class="permission-preview-label">Preview</span>
-        <code>{{ key.trim() }}</code>
+        <code>{{ normalizedCreateKey }}</code>
       </div>
 
     </div>
@@ -57,6 +57,15 @@
         <span class="material-symbols-rounded btn-icon">add_circle</span>
         {{ creating ? 'Creating...' : 'Create Permission' }}
       </button>
+    </div>
+
+    <div
+      *ngIf="feedback && !error"
+      class="muted"
+      style="padding: 0 20px 20px"
+      [style.color]="feedback.type === 'error' ? '#b91c1c' : '#15803d'"
+    >
+      {{ feedback.message }}
     </div>
 
   </div>
@@ -85,6 +94,14 @@
     </div>
   </div>
 
+  <div *ngIf="error" class="muted" style="padding: 0 20px 16px; color: #b91c1c;">
+    {{ error }}
+  </div>
+
+  <div *ngIf="loading" class="muted" style="padding: 0 20px 16px;">
+    Loading permissions...
+  </div>
+
   <table class="table table--compact">
 
     <thead>
@@ -97,7 +114,7 @@
 
     <tbody>
 
-      <tr *ngFor="let p of paginatedPermissions">
+      <tr *ngFor="let p of paginatedPermissions; trackBy: trackByPermissionId">
 
         <!-- KEY -->
         <td>
@@ -108,18 +125,19 @@
         <td>
 
           <!-- VIEW MODE -->
-          <span *ngIf="editing?.permission_id !== p.permission_id">
+          <span *ngIf="!isEditing(p)">
             {{ p.description || '—' }}
           </span>
 
           <!-- EDIT MODE -->
-          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+          <ng-container *ngIf="isEditing(p)">
 
             <input
               *hasPermission="'permission.update'"
               class="input"
               type="text"
-              [(ngModel)]="desc"
+              placeholder="Describe what this permission allows"
+              [(ngModel)]="editDescription"
             />
 
           </ng-container>
@@ -133,11 +151,12 @@
         <td>
 
           <!-- VIEW -->
-          <ng-container *ngIf="editing?.permission_id !== p.permission_id">
+          <ng-container *ngIf="!isEditing(p)">
             <div class="btn-group">
               <button
                 class="btn icon-btn"
                 (click)="startEdit(p)"
+                [disabled]="savingEdit || deletingPermissionId !== null"
                 *hasPermission="'permission.update'"
                 title="Edit permission"
               >
@@ -147,22 +166,25 @@
               <button
                 class="btn icon-btn danger"
                 (click)="delete(p)"
+                [disabled]="savingEdit || deletingPermissionId !== null"
                 *hasPermission="'permission.delete'"
                 title="Delete permission"
               >
-                <span class="material-symbols-rounded">delete</span>
+                <span class="material-symbols-rounded">
+                  {{ deletingPermissionId === p.permission_id ? 'hourglass_top' : 'delete' }}
+                </span>
               </button>
             </div>
 
           </ng-container>
 
           <!-- EDIT -->
-          <ng-container *ngIf="editing?.permission_id === p.permission_id">
+          <ng-container *ngIf="isEditing(p)">
 
             <button
               class="btn small primary"
               (click)="saveEdit()"
-              [disabled]="savingEdit"
+              [disabled]="savingEdit || !hasEditChanges"
               *hasPermission="'permission.update'"
             >
               <span class="material-symbols-rounded btn-icon">save</span>
@@ -185,7 +207,7 @@
       </tr>
 
       <!-- EMPTY STATE -->
-      <tr *ngIf="permissions.length === 0">
+      <tr *ngIf="!loading && permissions.length === 0">
         <td
           colspan="3"
           style="text-align:center; color: var(--text-secondary)"
@@ -198,7 +220,7 @@
 
   </table>
 
-  <div class="table-pagination" *ngIf="permissions.length > 0">
+  <div class="table-pagination" *ngIf="!loading && permissions.length > 0">
     <div class="table-pagination-left">
       <span class="table-pagination-label">Rows per page</span>
       <select
